@@ -1,0 +1,29 @@
+Command Shell to get the processor
+
+curl 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33' \
+  -H 'Authorization: Bearer eyJraWQiOiI5NmZjMDU0Yy01ZTg3LTQxZmQtYjg1MC1hOTIwZDVjYzFiNmIiLCJhbGciOiJQUzUxMiJ9.eyJzdWIiOiI2ZmNlMzFkYy1hM2VmLTRhYmEtOTRmYy01MzVkNDNjY2E4NDIiLCJhdWQiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwibmJmIjoxNjgzMDIyMzYwLCJpc3MiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNmZjZTMxZGMtYTNlZi00YWJhLTk0ZmMtNTM1ZDQzY2NhODQyIiwiZXhwIjoxNjgzMDUxMTYwLCJpYXQiOjE2ODMwMjIzNjAsImp0aSI6IjRiZDEzZTkyLWUwYzQtNDZhOS05NmJhLTU1OGM5MmJhZDhhYSJ9.Gt6NV7kSpVLxGvBRV7TJEktL4xGI6DAEhySTxq80SlVb8mNs1HMc0cjdEDxml-VEVMHNfWYpdi05OVf_nadCkFbwxtHh_nb-Ap5Jhn3-9y8IAoPrTeQ4bHqw-3UWGGW3X7VR6uqKNLJ5ya3utbYWkcAabg9kRydKpSKHzBjWOeG56Wbo203wiBoNo3CZ3z4Q5EZM8UExn1tQsE40Ih_hMxSUPyUOS2kEM6b7dPrwSrM0-sH3VwcFcHBHRU2JanRTpPQY2TBAe6jp9MVsZMZkf3RvekQiQitjeXl3K4LCLzCe6Rv_iiIwW__Cg9Lyw1sjFw72cTfh-eb5JL6IPvJ_mXMvGiJ7IQZXH3Bkj3I9KSZ0kIYd6koprbh-67d9qTpPifkTS-XJ3lkKYJoIp3V17ZXBe_4fD9UeYBaNLwni0LgGn7v_Io9thtWx7WuA04YbuBJ3EmqkGk6GCjylZ9-_XpzO2zrAz7KyKaBSvkG4HwgBsP7AaKgigZSPexu7g_jtV32fWuDr_wum02INRhic3bQbk2LxYTEkFdPufCeiO7gxIORa9spLk87wBVhuUBpeaU3uLCunjjegC7JM_KI4DjG7XRD2CSLz7jLEXgSYTEfLR_vzOmU5cKYPbTArnJfEyzrB6RH4NmUCaqGddASp01VsF2Zgtkatwt56tcNAvgE' \
+  --compressed \
+  --insecure
+
+
+Command Shell to modify the processor
+
+curl -X PUT 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33' \
+  -H 'Authorization: Bearer eyJraWQiOiI5NmZjMDU0Yy01ZTg3LTQxZmQtYjg1MC1hOTIwZDVjYzFiNmIiLCJhbGciOiJQUzUxMiJ9.eyJzdWIiOiI2ZmNlMzFkYy1hM2VmLTRhYmEtOTRmYy01MzVkNDNjY2E4NDIiLCJhdWQiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwibmJmIjoxNjgzMDIyMzYwLCJpc3MiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNmZjZTMxZGMtYTNlZi00YWJhLTk0ZmMtNTM1ZDQzY2NhODQyIiwiZXhwIjoxNjgzMDUxMTYwLCJpYXQiOjE2ODMwMjIzNjAsImp0aSI6IjRiZDEzZTkyLWUwYzQtNDZhOS05NmJhLTU1OGM5MmJhZDhhYSJ9.Gt6NV7kSpVLxGvBRV7TJEktL4xGI6DAEhySTxq80SlVb8mNs1HMc0cjdEDxml-VEVMHNfWYpdi05OVf_nadCkFbwxtHh_nb-Ap5Jhn3-9y8IAoPrTeQ4bHqw-3UWGGW3X7VR6uqKNLJ5ya3utbYWkcAabg9kRydKpSKHzBjWOeG56Wbo203wiBoNo3CZ3z4Q5EZM8UExn1tQsE40Ih_hMxSUPyUOS2kEM6b7dPrwSrM0-sH3VwcFcHBHRU2JanRTpPQY2TBAe6jp9MVsZMZkf3RvekQiQitjeXl3K4LCLzCe6Rv_iiIwW__Cg9Lyw1sjFw72cTfh-eb5JL6IPvJ_mXMvGiJ7IQZXH3Bkj3I9KSZ0kIYd6koprbh-67d9qTpPifkTS-XJ3lkKYJoIp3V17ZXBe_4fD9UeYBaNLwni0LgGn7v_Io9thtWx7WuA04YbuBJ3EmqkGk6GCjylZ9-_XpzO2zrAz7KyKaBSvkG4HwgBsP7AaKgigZSPexu7g_jtV32fWuDr_wum02INRhic3bQbk2LxYTEkFdPufCeiO7gxIORa9spLk87wBVhuUBpeaU3uLCunjjegC7JM_KI4DjG7XRD2CSLz7jLEXgSYTEfLR_vzOmU5cKYPbTArnJfEyzrB6RH4NmUCaqGddASp01VsF2Zgtkatwt56tcNAvgE' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "component": {
+          "id": "dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33",
+          "config": {
+            "properties": {
+              "/NationalID": "/TEST"
+            }
+          }
+        },
+        "revision": {
+          "version": 3,
+          "clientId": "dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33"
+        }
+      }' \
+  --compressed \
+  --insecure
