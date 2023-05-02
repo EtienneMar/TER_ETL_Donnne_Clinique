@@ -1,9 +1,9 @@
 version: "3.9"
 
-services: 
-  backend:
+services:
+  stockage:
     build:
-      context: ./backend/
+      context: ./backend/service_stockage/
     ports:
       - 5000:5000
   frontend:
@@ -11,7 +11,7 @@ services:
       context: ./frontend/
     ports:
       - 3000:3000
-  nifi: 
+  nifi:
     image: apache/nifi:latest
     ports:
       - 8443:8443
@@ -20,4 +20,3 @@ services:
       - SINGLE_USER_CREDENTIALS_PASSWORD=qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM
     volumes:
       - ./nifi_data:/opt/nifi/nifi-current/data
-    
