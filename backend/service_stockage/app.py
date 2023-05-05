@@ -1,4 +1,6 @@
 import os
+import requests
+import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -16,6 +18,14 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/', methods=['GET'])
+def home_test():
+    response = requests.get('http://conversion:5001/')
+    if response.status_code == 200:
+        json_data = response.json()
+
+    return jsonify("stockage up"+json_data)
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -25,10 +35,32 @@ def upload_file():
         return jsonify({"error": "No selected file"}), 400
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return jsonify({"message": "Upload successful"}), 200
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+
+        # Call convert excel to json microservice
+        with open(file_path, 'rb') as f:
+            response = requests.post('http://conversion:5001/excel-to-json', files={'file': f})
+
+        if response.status_code == 200:
+            json_data = response.json()
+
+            # Save each worksheet as a separate JSON file
+            for sheet_name, sheet_data in json_data.items():
+                json_file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{sheet_name}.json")
+                with open(json_file_path, 'w') as json_file:
+                    json.dump(sheet_data, json_file)
+
+            os.remove(file_path)
+
+            return jsonify({"message": "Upload successful and JSON files created"}), 200
+        else:
+            os.remove(file_path)
+            return jsonify({"error": "Error in converting Excel to JSON"}), 500
+
     else:
         return jsonify({"error": "File not allowed"}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5000)
+

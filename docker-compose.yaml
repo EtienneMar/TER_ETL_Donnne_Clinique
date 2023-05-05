@@ -1,4 +1,7 @@
 version: "3.9"
+networks:
+  my-network:
+    driver: bridge
 
 services:
   stockage:
@@ -6,17 +9,26 @@ services:
       context: ./backend/service_stockage/
     ports:
       - 5000:5000
+    networks:
+      - my-network
+  conversion:
+    build: 
+      context: ./backend/service_conversion/
+    ports:
+      - 5001:5001
+    networks:
+      - my-network
   frontend:
     build:
       context: ./frontend/
     ports:
       - 3000:3000
-  nifi:
-    image: apache/nifi:latest
-    ports:
-      - 8443:8443
-    environment:
-      - SINGLE_USER_CREDENTIALS_USERNAME=6fce31dc-a3ef-4aba-94fc-535d43cca842
-      - SINGLE_USER_CREDENTIALS_PASSWORD=qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM
-    volumes:
-      - ./nifi_data:/opt/nifi/nifi-current/data
+  #nifi:
+  #  image: apache/nifi:latest
+  #  ports:
+  #    - 8443:8443
+  #  environment:
+  #    - SINGLE_USER_CREDENTIALS_USERNAME=6fce31dc-a3ef-4aba-94fc-535d43cca842
+  #    - SINGLE_USER_CREDENTIALS_PASSWORD=qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM
+  #  volumes:
+  #    - ./nifi_data:/opt/nifi/nifi-current/data
