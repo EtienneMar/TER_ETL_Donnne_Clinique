@@ -50,6 +50,18 @@ def upload_file():
                 json_file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{sheet_name}.json")
                 with open(json_file_path, 'w') as json_file:
                     json.dump(sheet_data, json_file)
+                    
+             # Send JSON data to NiFi
+            with open(json_file_path, 'rb') as f:
+                nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f})
+            if nifi_response.status_code == 200 : 
+                rules_response = request.post('http://rules:5004/rules', json=nifi_response.json())
+                
+              # Check if NiFi request was successful
+            if nifi_response.status_code != 200:
+                return jsonify({"error": "Error sending JSON to NiFi"}), 500
+
+            
 
             os.remove(file_path)
 

@@ -23,12 +23,15 @@ services:
       context: ./frontend/
     ports:
       - 3000:3000
-  #nifi:
-  #  image: apache/nifi:latest
-  #  ports:
-  #    - 8443:8443
-  #  environment:
-  #    - SINGLE_USER_CREDENTIALS_USERNAME=6fce31dc-a3ef-4aba-94fc-535d43cca842
-  #    - SINGLE_USER_CREDENTIALS_PASSWORD=qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM
-  #  volumes:
-  #    - ./nifi_data:/opt/nifi/nifi-current/data
+  nifi:
+    image: apache/nifi:latest
+    ports:
+      - 8443:8443
+      - 5003:5003 
+    environment:
+      - SINGLE_USER_CREDENTIALS_USERNAME=6fce31dc-a3ef-4aba-94fc-535d43cca842
+      - SINGLE_USER_CREDENTIALS_PASSWORD=qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM
+    volumes:
+      - ./nifi_data:/opt/nifi/nifi-current/data
+    networks:
+      - my-network
