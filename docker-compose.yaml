@@ -18,6 +18,13 @@ services:
       - 5001:5001
     networks:
       - my-network
+  rules:
+    build: 
+      context: ./backend/service_rules/
+    ports:
+      - 5002:5002
+    networks:
+      - my-network
   frontend:
     build:
       context: ./frontend/

@@ -1,3 +1,5 @@
 Flask==2.2.3
 flask-cors==3.0.10
 pandas==2.0.1
+simplejson==3.19.1
+convertdate==2.4.0

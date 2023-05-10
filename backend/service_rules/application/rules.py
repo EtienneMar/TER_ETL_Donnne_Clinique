@@ -37,8 +37,10 @@ class Rules():
     #taille N 
     def v_lenght(self, number_length_limit: int, column_names_to_test: list, column_names_to_keep: list):
         #df_rejected_row = pd.DataFrame()
-        mask = self.__df[column_names_to_test].apply(lambda x: len(str(x)) > number_length_limit)
-        self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), 'warning', f'La longueur ne doit pas dépasser {number_length_limit} Caractères')
+        for col in column_names_to_test : 
+            mask = self.__df[col].apply(lambda x: len(str(x)) > number_length_limit)
+            column_names_to_keep.append(col)
+            self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), 'warning', f'La longueur ne doit pas dépasser {number_length_limit} caractères')
         #df_rejected_row = 
         #self.concat_dfRejected(df_rejected_row)
 

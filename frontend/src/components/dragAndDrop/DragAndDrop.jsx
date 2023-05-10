@@ -97,3 +97,4 @@ const DragAndDrop = () => {
   
   // Exporte le composant DragAndDrop par défaut pour être utilisé dans d'autres modules
   export default DragAndDrop;
+  kzejazlkenapzejaj$

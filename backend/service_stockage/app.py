@@ -55,8 +55,8 @@ def upload_file():
             with open(json_file_path, 'rb') as f:
                 nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f})
             if nifi_response.status_code == 200 : 
-                rules_response = request.post('http://rules:5004/rules', json=nifi_response.json())
-                
+                rules_response = requests.post('http://rules:5002/rules', json=nifi_response.json())
+                print(rules_response.json())
               # Check if NiFi request was successful
             if nifi_response.status_code != 200:
                 return jsonify({"error": "Error sending JSON to NiFi"}), 500
