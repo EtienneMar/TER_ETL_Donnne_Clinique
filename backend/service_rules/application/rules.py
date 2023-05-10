@@ -36,13 +36,11 @@ class Rules():
     #Temps en n2 parcourir toutes les colonnes des noms de colonne données et pour chacune de ces colonnes tester si elles sont inférieur à une
     #taille N 
     def v_lenght(self, number_length_limit: int, column_names_to_test: list, column_names_to_keep: list):
-        #df_rejected_row = pd.DataFrame()
         for col in column_names_to_test : 
             mask = self.__df[col].apply(lambda x: len(str(x)) > number_length_limit)
             column_names_to_keep.append(col)
-            self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), 'warning', f'La longueur ne doit pas dépasser {number_length_limit} caractères')
-        #df_rejected_row = 
-        #self.concat_dfRejected(df_rejected_row)
+            self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), f'La longueur ne doit pas dépasser {number_length_limit} caractères','warning', )
+
 
         
     #On utilise isalnum car elle est plus rapide en terme de complexite

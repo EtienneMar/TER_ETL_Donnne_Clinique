@@ -78,20 +78,20 @@ class TestRulesWebService(unittest.TestCase):
         # Créer un DataFrame de test avec des duplicatas et le convertir en JSON
         test_data_df = [
             {'FathersName': 'A' * 101, 'FathersPreName': 'B', 'PatientNumber':1111},
-            {'FathersName': 'A', 'FathersPreName': 'B' * 101, 'PatientNumber':1111},
-            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':1111},
+            {'FathersName': 'A', 'FathersPreName': 'B' * 101, 'PatientNumber':5555},
+            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':6666},
         ]
         
         # Créer un DataFrame de référence sans duplicatas
         ref_data_df = [
             {'FathersName': 'A' * 101, 'FathersPreName': 'B', 'PatientNumber':1111},
-            {'FathersName': 'A', 'FathersPreName': 'B' * 101, 'PatientNumber':1111},
-            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':1111},
+            {'FathersName': 'A', 'FathersPreName': 'B' * 101, 'PatientNumber':5555},
+            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':6666},
         ]
         
         ref_data_dfRejected = [
-            {'FathersName': 'A' * 101, 'PatientNumber':1111, 'Rules': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
-            {'FathersPreName': 'B' * 101, 'PatientNumber':1111, 'Rules': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
+            {'FathersName': 'A' * 101, 'PatientNumber':1111, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
+            {'FathersPreName': 'B' * 101, 'PatientNumber':5555, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
         ]
         
         self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
