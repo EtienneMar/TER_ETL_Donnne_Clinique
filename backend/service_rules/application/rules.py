@@ -38,7 +38,8 @@ class Rules():
     def v_lenght(self, number_length_limit: int, column_names_to_test: list, column_names_to_keep: list):
         for col in column_names_to_test : 
             mask = self.__df[col].apply(lambda x: len(str(x)) > number_length_limit)
-            column_names_to_keep.append(col)
+            column_names_to_keep_copy = column_names_to_keep.copy()  # create a copy of the list
+            column_names_to_keep_copy.append(col)
             self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), f'La longueur ne doit pas dépasser {number_length_limit} caractères','warning', )
 
 

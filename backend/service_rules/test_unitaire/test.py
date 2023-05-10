@@ -26,7 +26,7 @@ class TestRulesWebService(unittest.TestCase):
         response_data = json.loads(response.data)
         response_df = pd.DataFrame(response_data['df'])
         ref_df = pd.DataFrame(ref_data)
-        return pd.testing.assert_frame_equal(response_df, ref_df)
+        pd.testing.assert_frame_equal(response_df, ref_df)
     
     def process_testing_df_dfRejected(self, test_data_df, ref_data_dfRejected):
         # Envoyer une requête POST au point de terminaison /rules
@@ -54,7 +54,19 @@ class TestRulesWebService(unittest.TestCase):
         ref_df = pd.DataFrame(ref_data_df)
         response_dfRejected = pd.DataFrame(response_data['df_rejected'])
         ref_dfRejected = pd.DataFrame(ref_data_dfRejected)
-        return pd.testing.assert_frame_equal(response_df, ref_df) and pd.testing.assert_frame_equal(response_dfRejected, ref_dfRejected)
+        
+        try:
+            #print("Response DF shape:", response_df.shape)
+            #print(response_df)
+            #print("Reference DF shape:", ref_df.shape)
+            #print(ref_df)
+            pd.testing.assert_frame_equal(response_df, ref_df)
+            pd.testing.assert_frame_equal(response_dfRejected, ref_dfRejected)
+            
+
+        except AssertionError:
+            self.fail("DataFrames are not equal.")
+
 
     def test_rules_endpoint_removes_duplicates(self):
         # Créer un DataFrame de test avec des duplicatas et le convertir en JSON
@@ -73,7 +85,7 @@ class TestRulesWebService(unittest.TestCase):
         ]
         
         self.process_testing_only_df(test_data_df, ref_data_df)
-        
+      
     def test_rules_endpoint_removes_v_length(self):
         # Créer un DataFrame de test avec des duplicatas et le convertir en JSON
         test_data_df = [
@@ -91,7 +103,7 @@ class TestRulesWebService(unittest.TestCase):
         
         ref_data_dfRejected = [
             {'PatientNumber':1111, 'FathersName': 'A' * 101, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
-            {'PatientNumber':5555, 'FathersPreName': 'B' * 101,  'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
+            {'PatientNumber':5555, 'FathersPreName': 'B' * 101, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
         ]
         
         self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
