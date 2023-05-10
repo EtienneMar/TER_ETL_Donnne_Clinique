@@ -96,5 +96,17 @@ class TestRulesWebService(unittest.TestCase):
         
         self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
 
+
+    def test_rules_endpoint_removes_v_length(self):
+        # Créer un DataFrame de test avec des duplicatas et le convertir en JSON
+        test_data_df = [
+            {'DateOfDeath': 2019, 'DateOfBitrh': 2020},
+            {'DateOfDeath': 2018, 'DateOfBitrh': 2020},
+            {'DateOfDeath': 2016, 'DateOfBitrh': 2021},
+        ]
+
+        
+        self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
+
 if __name__ == "__main__":
     unittest.main()
