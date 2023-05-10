@@ -90,8 +90,8 @@ class TestRulesWebService(unittest.TestCase):
         ]
         
         ref_data_dfRejected = [
-            {'FathersName': 'A' * 101, 'PatientNumber':1111, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
-            {'FathersPreName': 'B' * 101, 'PatientNumber':5555, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
+            {'PatientNumber':1111, 'FathersName': 'A' * 101, 'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
+            {'PatientNumber':5555, 'FathersPreName': 'B' * 101,  'Rule': 'V-length100' , 'Type' : 'warning', 'Message' : 'La longueur ne doit pas dépasser 100 caractères'},
         ]
         
         self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
