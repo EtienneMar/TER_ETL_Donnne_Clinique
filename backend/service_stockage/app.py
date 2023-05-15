@@ -29,10 +29,10 @@ def home_test():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+        return jsonify({"error": "No file part"}), 400 #Il n'y a pas de clé dans la requete 
     file = request.files['file']
     if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+        return jsonify({"error": "No selected file"}), 400 #Il n'y a pas de valeur dans l'ensemble clé valeur ou bien elle est nul
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -54,14 +54,14 @@ def upload_file():
              # Send JSON data to NiFi
             with open(json_file_path, 'rb') as f:
                 nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f})
+            #A SUPPRIMER
             if nifi_response.status_code == 200 : 
                 rules_response = requests.post('http://rules:5002/rules', json=nifi_response.json())
                 print(rules_response.json())
               # Check if NiFi request was successful
             if nifi_response.status_code != 200:
                 return jsonify({"error": "Error sending JSON to NiFi"}), 500
-
-            
+            #
 
             os.remove(file_path)
 
