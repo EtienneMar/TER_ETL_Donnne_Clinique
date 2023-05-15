@@ -28,6 +28,7 @@ services:
   frontend:
     build:
       context: ./frontend/
+    command: npm run serve
     ports:
       - 3000:3000
   nifi:

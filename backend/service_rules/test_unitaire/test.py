@@ -26,21 +26,11 @@ class TestRulesWebService(unittest.TestCase):
         response_data = json.loads(response.data)
         response_df = pd.DataFrame(response_data['df'])
         ref_df = pd.DataFrame(ref_data)
-        pd.testing.assert_frame_equal(response_df, ref_df)
-    
-    def process_testing_df_dfRejected(self, test_data_df, ref_data_dfRejected):
-        # Envoyer une requête POST au point de terminaison /rules
-        response = self.app.post(f'{SERVER_URL}/rules', json=test_data_df)
-
-        # Vérifier si la réponse est un succès (code 200)
-        self.assertEqual(response.status_code, 200)
-
-        # Convertir la réponse JSON en DataFrame et vérifier si elle est égale au DataFrame de référence
-        response_data = json.loads(response.data)
-        response_dfRejected = pd.DataFrame(response_data['df_rejected'])
-        ref_dfRejected = pd.DataFrame(ref_data_dfRejected)
-        return pd.testing.assert_frame_equal(response_dfRejected, ref_dfRejected)
-    
+        try:
+            pd.testing.assert_frame_equal(response_df, ref_df)
+        except AssertionError:
+            self.fail("There are always duplicate inside the data.")
+           
     def process_testing_both_df_dfRejected(self, test_data_df, ref_data_df, ref_data_dfRejected):
         # Envoyer une requête POST au point de terminaison /rules
         response = self.app.post(f'{SERVER_URL}/rules', json=test_data_df)
@@ -62,8 +52,6 @@ class TestRulesWebService(unittest.TestCase):
             #print(ref_df)
             pd.testing.assert_frame_equal(response_df, ref_df)
             pd.testing.assert_frame_equal(response_dfRejected, ref_dfRejected)
-            
-
         except AssertionError:
             self.fail("DataFrames are not equal.")
 
@@ -85,7 +73,7 @@ class TestRulesWebService(unittest.TestCase):
         ]
         
         self.process_testing_only_df(test_data_df, ref_data_df)
-      
+        
     def test_rules_endpoint_removes_v_length(self):
         # Créer un DataFrame de test avec des duplicatas et le convertir en JSON
         test_data_df = [
@@ -107,6 +95,27 @@ class TestRulesWebService(unittest.TestCase):
         ]
         
         self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
-
+        
+    def test_rules_endpoint_removes_alpha_character(self):
+        test_data_df = [
+            {'FathersName': 'A59', 'FathersPreName': 'B', 'PatientNumber':1111},
+            {'FathersName': 'A', 'FathersPreName': 'B4', 'PatientNumber':5555},
+            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':6666},
+        ]
+        
+        # Créer un DataFrame de référence sans duplicatas
+        ref_data_df = [
+            {'FathersName': 'A59', 'FathersPreName': 'B', 'PatientNumber':1111},
+            {'FathersName': 'A', 'FathersPreName': 'B4', 'PatientNumber':5555},
+            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':6666},
+        ]
+        
+        ref_data_dfRejected = [
+            {'PatientNumber':1111, 'FathersName': 'A59' ,'Rule': 'V-Alpha-2' , 'Type' : 'warning', 'Message' : 'Alpha characters only'},
+            {'PatientNumber':5555, 'FathersPreName': 'B4', 'Rule': 'V-Alpha-2' , 'Type' : 'warning', 'Message' : 'Alpha characters only'},
+        ]
+        
+        self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
+        
 if __name__ == "__main__":
     unittest.main()

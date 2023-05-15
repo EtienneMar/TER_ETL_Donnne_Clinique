@@ -1,0 +1,13 @@
+.navbar {
+  --bs-navbar-active-color: var(--bs-primary);
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.show {
+  font-weight: 500;
+}
+
+.register-page,
+.login-page {
+  max-width: 400px;
+}

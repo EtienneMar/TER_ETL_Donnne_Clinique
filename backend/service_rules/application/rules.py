@@ -25,34 +25,34 @@ class Rules():
     #def concat_dfRejected(self, df_new_rejected_row) : 
     #    self.__dfRejected = pd.concat([self.__dfRejected, df_new_rejected_row])
         
-    def create_rejected_rows(self, mask : Series, column_names_to_keep : str, rule : str, message : str,alert_type : str='rejected'):
+    def create_rejected_rows(self, mask : Series, column_names_to_keep : list, rule : str, message : str,alert_type : str='rejected'):
         df_rejected_row = self.__df.loc[mask, column_names_to_keep].copy()
         df_rejected_row['Rule'] = rule
         df_rejected_row['Type'] = alert_type
         df_rejected_row['Message'] = message
         self.__dfRejected = pd.concat([self.__dfRejected, df_rejected_row])
-        return df_rejected_row 
+        return None
+   
 
     #Temps en n2 parcourir toutes les colonnes des noms de colonne données et pour chacune de ces colonnes tester si elles sont inférieur à une
     #taille N 
+"""
     def v_lenght(self, number_length_limit: int, column_names_to_test: list, column_names_to_keep: list):
         for col in column_names_to_test : 
             mask = self.__df[col].apply(lambda x: len(str(x)) > number_length_limit)
-            column_names_to_keep_copy = column_names_to_keep.copy()  # create a copy of the list
-            column_names_to_keep_copy.append(col)
-            self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), f'La longueur ne doit pas dépasser {number_length_limit} caractères','warning', )
+            column_names_to_keep.append(col)
+            self.create_rejected_rows(mask, column_names_to_keep, 'V-length' + str(number_length_limit), f'La longueur ne doit pas dépasser {number_length_limit} caractères','warning')
+            column_names_to_keep.remove(col)
+"""
 
-
-        
     #On utilise isalnum car elle est plus rapide en terme de complexite
-    def alphaCharacter(self, column_names_to_test: list, column_names_to_keep: list, type_alert='rejected'):
-        mask = self.__df[column_names_to_test].apply(lambda x: str(x).isalnum())
-        df_rejected_row = pd.DataFrame()
-        if type_alert == 'rejected' : 
-            df_rejected_row = self.create_rejected_rows(mask, column_names_to_keep, 'V-Alpha-1','Alpha characters only',type_alert)
-        elif type_alert == 'warning':
-            df_rejected_row = self.create_rejected_rows(mask, column_names_to_keep, 'V-Alpha-2', 'Alpha characters only',type_alert)
-        self.concat_dfRejected(df_rejected_row)
+    def alpha_character(self, column_names_to_test:list, column_names_to_keep:list, type_alert='rejected'):
+        for col in column_names_to_test:
+            mask = self.__df[col].apply(lambda x: str(x).isalpha())
+            if type_alert == 'rejected':
+                self.create_rejected_rows(mask, column_names_to_keep, 'V-Alpha-1','Alpha characters only',type_alert)
+            elif type_alert == 'warning':
+                self.create_rejected_rows(mask, column_names_to_keep, 'V-Alpha-2', 'Alpha characters only',type_alert)
 
     def remove_leading_zero(self):
         

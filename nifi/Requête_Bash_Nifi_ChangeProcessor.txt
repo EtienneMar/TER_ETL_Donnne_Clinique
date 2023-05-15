@@ -8,12 +8,12 @@ curl 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-a6f2-d7bcf8f
 
 Command Shell to modify the processor
 
-curl -X PUT 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33' \
-  -H 'Authorization: Bearer eyJraWQiOiI5NmZjMDU0Yy01ZTg3LTQxZmQtYjg1MC1hOTIwZDVjYzFiNmIiLCJhbGciOiJQUzUxMiJ9.eyJzdWIiOiI2ZmNlMzFkYy1hM2VmLTRhYmEtOTRmYy01MzVkNDNjY2E4NDIiLCJhdWQiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwibmJmIjoxNjgzMDIyMzYwLCJpc3MiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNmZjZTMxZGMtYTNlZi00YWJhLTk0ZmMtNTM1ZDQzY2NhODQyIiwiZXhwIjoxNjgzMDUxMTYwLCJpYXQiOjE2ODMwMjIzNjAsImp0aSI6IjRiZDEzZTkyLWUwYzQtNDZhOS05NmJhLTU1OGM5MmJhZDhhYSJ9.Gt6NV7kSpVLxGvBRV7TJEktL4xGI6DAEhySTxq80SlVb8mNs1HMc0cjdEDxml-VEVMHNfWYpdi05OVf_nadCkFbwxtHh_nb-Ap5Jhn3-9y8IAoPrTeQ4bHqw-3UWGGW3X7VR6uqKNLJ5ya3utbYWkcAabg9kRydKpSKHzBjWOeG56Wbo203wiBoNo3CZ3z4Q5EZM8UExn1tQsE40Ih_hMxSUPyUOS2kEM6b7dPrwSrM0-sH3VwcFcHBHRU2JanRTpPQY2TBAe6jp9MVsZMZkf3RvekQiQitjeXl3K4LCLzCe6Rv_iiIwW__Cg9Lyw1sjFw72cTfh-eb5JL6IPvJ_mXMvGiJ7IQZXH3Bkj3I9KSZ0kIYd6koprbh-67d9qTpPifkTS-XJ3lkKYJoIp3V17ZXBe_4fD9UeYBaNLwni0LgGn7v_Io9thtWx7WuA04YbuBJ3EmqkGk6GCjylZ9-_XpzO2zrAz7KyKaBSvkG4HwgBsP7AaKgigZSPexu7g_jtV32fWuDr_wum02INRhic3bQbk2LxYTEkFdPufCeiO7gxIORa9spLk87wBVhuUBpeaU3uLCunjjegC7JM_KI4DjG7XRD2CSLz7jLEXgSYTEfLR_vzOmU5cKYPbTArnJfEyzrB6RH4NmUCaqGddASp01VsF2Zgtkatwt56tcNAvgE' \
+curl -X PUT 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-ff02-6aeca5eb3d49' \
+  -H 'Authorization: Bearer eyJraWQiOiIxMzEzZmI2OC03OWIzLTRhNGMtOGJhZC1iOGQ2MTBmMmI4NzciLCJhbGciOiJQUzUxMiJ9.eyJzdWIiOiI2ZmNlMzFkYy1hM2VmLTRhYmEtOTRmYy01MzVkNDNjY2E4NDIiLCJhdWQiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwibmJmIjoxNjgzOTIxNjc0LCJpc3MiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNmZjZTMxZGMtYTNlZi00YWJhLTk0ZmMtNTM1ZDQzY2NhODQyIiwiZXhwIjoxNjgzOTUwNDc0LCJpYXQiOjE2ODM5MjE2NzQsImp0aSI6ImI0YmE5ZmUzLTQ0MWUtNGYzYy1iOGUyLTVhMzc0NWM1YzM1NSJ9.JKkCCTvu_oYsmfWsDEw-3Zq_RAqKX9x-Zbof3veV-tI2jFd-zZjlNdiYj_YXUJSsiXoU3wMukJEr_qWSLeQHVKFk0gYQ3QDTg9kyqgs6EHOs3GWTpWKT2K0j08Sc2usoFdpUEKFsEHpWiOs7k8hd-GKmizacrstFWnOTfqi50ZunjzW7tSeQmv8PvOuGXcXzSGs7tTO2ECXAUCcdbtbF_d3sOVWmJ7taKaBInATZqST9eNurTt5N-HS7fLfQBSK_DbQvN_38apHctGDi0s_9CgxV7MMse5Oj9IIzEdUZnayEFG6QEfAR0NrAc-eqNPMhOSCpHetJEbp1o1NeNEkjLfWk3ERtoE5ysyyTzsBA_YsX2ni5BV0pB4teOq_hh0_eNDzFpGR293bhN4VWvYFsKPKPtZ2etk-siHAz6u6JKMbXxuZTxTucNZyLy2liSrDBgRsnf88bRPLn4xSKY1MoyVERXKSjow8WLA7Z072oMUQSCkcoU2oGDsflhdvY2rNFpflfNFLcYruKwsgOLil8jchuWsZue5XL69ZxlIW1uVHBzOKXJeQ2zaL-CB8OelrYeNpCVgH79AjLb4AHnTWK9oiR7VyI-fRh78L17EdqxZ_tmfPCHaXOhTkkxGKBQGFEINoUYePqR2z-QkonYC7wfvIAg0UivU9mdvG5cAhSFfo' \
   -H 'Content-Type: application/json' \
   -d '{
         "component": {
-          "id": "dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33",
+          "id": "dbfdf09a-a730-3ac7-ff02-6aeca5eb3d49",
           "config": {
             "properties": {
               "/NationalID": "/TEST"
@@ -21,9 +21,66 @@ curl -X PUT 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-a6f2-
           }
         },
         "revision": {
-          "version": 3,
-          "clientId": "dbfdf09a-a730-3ac7-a6f2-d7bcf8fafa33"
+          "version": 0,
+          "clientId": "dbfdf09a-a730-3ac7-ff02-6aeca5eb3d49"
         }
       }' \
   --compressed \
   --insecure
+
+
+{
+"PatientNumber": "RandomValue1",
+"Hospital": "RandomValue2",
+"DateOfBirth": "RandomValue3",
+"Gender": "RandomValue4",
+"PatientDeceased": "RandomValue5",
+"DateofDeath": "RandomValue6",
+"PlaceOfBirth": "RandomValue7",
+"EthnicOrigin": "RandomValue8",
+"Nationality": "RandomValue9",
+"LastName": "RandomValue10",
+"FirstName": "RandomValue11",
+"Title": "RandomValue12",
+"MothersName": "RandomValue13",
+"MothersPreName": "RandomValue14",
+"FathersName": "RandomValue15",
+"FathersPreName": "RandomValue16",
+"FamilyDoctor": "RandomValue17",
+"NationalID": "RandomValue18",
+"FileDateCreation": "RandomValue19"
+}
+
+[
+  {
+    "operation": "default",
+    "spec": {
+      "Rule": "V-Today-1", 
+      "Type": "Rejet",
+      "Message": "Value must be less than or equal to today"
+    }
+  },
+  {
+    "operation": "remove",
+    "spec": {
+		"Hospital": "",
+		"DateOfBirth": "",
+		"Gender": "",
+		"PatientDeceased": "",
+		"DateofDeath": "",
+		"PlaceOfBirth": "",
+		"EthnicOrigin": "",
+		"Nationality": "",
+		"LastName": "",
+		"FirstName": "",
+		"Title": "",
+		"MothersName": "",
+		"MothersPreName": "",
+      	"FathersName":"",
+		"FathersPreName": "",
+		"FamilyDoctor": "",
+		"NationalID": "",
+		"FileDateCreation": ""
+	}  
+  }
+]
