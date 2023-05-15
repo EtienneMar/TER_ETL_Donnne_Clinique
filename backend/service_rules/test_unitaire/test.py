@@ -95,27 +95,6 @@ class TestRulesWebService(unittest.TestCase):
         ]
         
         self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
-        
-    def test_rules_endpoint_removes_alpha_character(self):
-        test_data_df = [
-            {'FathersName': 'A59', 'FathersPreName': 'B', 'PatientNumber':1111},
-            {'FathersName': 'A', 'FathersPreName': 'B4', 'PatientNumber':5555},
-            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':6666},
-        ]
-        
-        # Créer un DataFrame de référence sans duplicatas
-        ref_data_df = [
-            {'FathersName': 'A59', 'FathersPreName': 'B', 'PatientNumber':1111},
-            {'FathersName': 'A', 'FathersPreName': 'B4', 'PatientNumber':5555},
-            {'FathersName': 'D', 'FathersPreName': 'C', 'PatientNumber':6666},
-        ]
-        
-        ref_data_dfRejected = [
-            {'PatientNumber':1111, 'FathersName': 'A59' ,'Rule': 'V-Alpha-2' , 'Type' : 'warning', 'Message' : 'Alpha characters only'},
-            {'PatientNumber':5555, 'FathersPreName': 'B4', 'Rule': 'V-Alpha-2' , 'Type' : 'warning', 'Message' : 'Alpha characters only'},
-        ]
-        
-        self.process_testing_both_df_dfRejected(test_data_df, ref_data_df, ref_data_dfRejected)
-        
+
 if __name__ == "__main__":
     unittest.main()

@@ -81,7 +81,7 @@ class Rules():
 
         self.__df.loc[hijri_date.index, columns_names_to_test] = hijri_date
 
-    def v_date(self, columns_names_to_test : str, columns_to_keep : str, name_column_date_of_birth : str = None, date_of_death : bool=False) : 
+    def v_date(self, columns_names_to_test : str, columns_to_keep : list, name_column_date_of_birth : str = None, date_of_death : bool=False) : 
         
         gregorian_today = datetime.now()
         gregorian_date_limit = gregorian_today - timedelta(days=125*365)
@@ -90,23 +90,20 @@ class Rules():
         if date_of_death : 
             mask_v_date_of_death = df.apply(lambda x : x if x >= name_column_date_of_birth else None)
             if len(mask_v_date_of_death) > 0 : 
-                df_rejected_row_1 = self.create_rejected_rows(mask_v_date_of_death, columns_to_keep, 'V-DateofDeath', 'Date must be greater than or equal to DateOfBirth')
-                self.concat_dfRejected(df_rejected_row_1)
+                self.create_rejected_rows(mask_v_date_of_death, columns_to_keep, 'V-DateofDeath', 'Date must be greater than or equal to DateOfBirth')
+            
             
         mask_v_today_1 = df.apply(lambda x: x if x <= datetime.now() else None)
         if len(mask_v_today_1) > 0 : 
-            df_rejected_row_2 = self.create_rejected_rows(mask_v_today_1, columns_to_keep, 'V-Today-1', 'Value must be less than or equal to today')
-            self.concat_dfRejected(df_rejected_row_2)
+            self.create_rejected_rows(mask_v_today_1, columns_to_keep, 'V-Today-1', 'Value must be less than or equal to today')
 
         mask_v_date_of_birth_1 = df.apply(lambda x: x if x >= gregorian_date_limit else None)
         if len(mask_v_date_of_birth_1) > 0 : 
             df_rejected_row_3 = self.create_rejected_rows(mask_v_date_of_birth_1, columns_to_keep, 'V-DateOfBirth-1', 'Patient older than 125 years')
-            self.concat_dfRejected(df_rejected_row_3)
         
         mask_v_format_date_1 = pd.to_datetime(self.__df[columns_names_to_test], errors='coerce', format='%Y-%m-%d %H:%M:%S')
         if len(mask_v_format_date_1) > 0 : 
-            df_rejected_row_4 = self.create_rejected_rows(mask_v_format_date_1, columns_to_keep, 'V-FormatDate-1','Invalid date format. Must be YYYY-MM-DD HH: MM: SS')
-            self.concat_dfRejected(df_rejected_row_4)
+            self.create_rejected_rows(mask_v_format_date_1, columns_to_keep, 'V-FormatDate-1','Invalid date format. Must be YYYY-MM-DD HH: MM: SS')
             
     def patient_deceased(self, column_names_to_test : str, name_column_to_fill) :
         
