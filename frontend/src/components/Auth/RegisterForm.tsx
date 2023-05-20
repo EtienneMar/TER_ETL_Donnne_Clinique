@@ -1,14 +1,46 @@
-import {
-  BsPersonCircle,
-  BsEnvelope,
-  BsLock,
-  BsKey,
-  BsBoxArrowUpRight,
-} from 'react-icons/bs';
+import { BsPersonCircle, BsEnvelope, BsLock, BsKey, BsBoxArrowUpRight } from 'react-icons/bs';
+import { FormEvent } from 'react';
 
 function RegisterForm() {
+  
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const username = formData.get('username') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      const response = await fetch('http://localhost:5005/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        // TODO: Handle response data, e.g., show a success message, redirect, etc.
+      } else {
+        throw new Error('An error occurred');
+      }
+    } catch (error) {
+      console.log('An error occurred:', error);
+      // TODO: Handle error, e.g., show an error message, clear form fields, etc.
+    }
+  };
+
+
   return (
-    <form className="card">
+    <form className="card" onSubmit={handleSubmit}>
       <div className="card-header bg-transparent py-3">
         <h4 className="text-capitalize text-center fw-semibold mb-0">
           Register
@@ -26,6 +58,7 @@ function RegisterForm() {
             aria-label="Name"
             aria-describedby="name-addon"
             required
+            name='username'
           />
         </div>
         <div className="input-group mb-3">
@@ -39,6 +72,7 @@ function RegisterForm() {
             aria-label="Email"
             aria-describedby="email-addon"
             required
+            name='email'
           />
         </div>
         <div className="input-group mb-3">
@@ -65,6 +99,7 @@ function RegisterForm() {
             aria-label="Confirm Password"
             aria-describedby="confirm-password-addon"
             required
+            name='password'
           />
         </div>
         <div className="form-check mb-0">

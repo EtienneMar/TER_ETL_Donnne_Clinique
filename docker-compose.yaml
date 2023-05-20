@@ -25,6 +25,13 @@ services:
       - 5002:5002
     networks:
       - my-network
+  registry:
+    build: 
+      context: ./backend/service_register/
+    ports:
+      - 5005:5005
+    networks:
+      - my-network
   frontend:
     build:
       context: ./frontend/
@@ -43,3 +50,4 @@ services:
       - ./nifi_data:/opt/nifi/nifi-current/data
     networks:
       - my-network
+    

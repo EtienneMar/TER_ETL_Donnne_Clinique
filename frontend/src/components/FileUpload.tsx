@@ -3,13 +3,19 @@ import { useState } from 'react';
 
 function FileUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>();
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
-      setSelectedFile(file);
-      setFileUrl(URL.createObjectURL(file));
+      if (file && file.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        // Affiche une alerte si le fichier n'est pas un fichier Excel
+        setShowAlert(true);
+        setSelectedFile(null);
+      } else {
+        setShowAlert(false);
+        setSelectedFile(file);
+      }
     }
   };
 
@@ -30,7 +36,7 @@ function FileUpload() {
       return response.json(); // Retourne la réponse sous forme de JSON
     })
     .then(data => { // Traitement de la réponse JSON
-      console.log('Upload successful'); // Affiche un message de confirmation dans la console du navigateur
+      console.log('Upload successful', data); // Affiche un message de confirmation dans la console du navigateur
     })
     .catch(error => { // Gestion des erreurs
       console.error('Error uploading file: ', error); // Affiche un message d'erreur dans la console du navigateur avec le message d'erreur spécifique
@@ -43,6 +49,11 @@ function FileUpload() {
       <div className="container py-5">
         <div className="col-lg-6 mx-auto">
           <h5 className="form-label mb-3">Upload Your File </h5>
+          {showAlert && (
+            <div className="alert alert-danger mt-3" role="alert">
+             Le fichier déposé n'est pas un fichier Excel.
+            </div>
+            )}
           <div className="input-group">
             <input
               type="file"
@@ -50,6 +61,7 @@ function FileUpload() {
               className="form-control"
               onChange={handleFileChange}
             />
+
             <button
               type="button"
               id="uploadFile"
@@ -58,7 +70,7 @@ function FileUpload() {
               (i.e., not null or undefined). This check ensures that you're only passing a valid File object to the function, 
               resolving the type error.*/
               onClick={() => {
-                if (selectedFile) {
+                if (selectedFile) { //Testing if the file is null or undefined
                   handleUploadClick(selectedFile);
                 }
               }}
@@ -68,11 +80,6 @@ function FileUpload() {
               <span className="text-capitalize">Upload Now </span>
             </button>
           </div>
-          {fileUrl && (
-            <div className="mt-3">
-              <img src={fileUrl} alt="Selected file" className="img-thumbnail" />
-            </div>
-          )}
         </div>
       </div>
     </section>
