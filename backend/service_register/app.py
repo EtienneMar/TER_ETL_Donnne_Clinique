@@ -6,16 +6,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/example', methods=['GET'])
-def example_route():
-    # Execute a sample query
-    cursor.execute("SELECT * FROM users")
-    result = cursor.fetchall()
-
-    # Process the result or return it as JSON
-    #data = [{'id': row[0], 'name': row[1]} for row in result]
-    return jsonify(result)
-
 
 @app.route('/register', methods=['POST'])
 def new_account_register() :

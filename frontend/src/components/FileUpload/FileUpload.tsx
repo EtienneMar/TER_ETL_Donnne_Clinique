@@ -1,9 +1,19 @@
 import { BsCloudUpload } from 'react-icons/bs';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../Global/UserProvider';
 
 function FileUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>();
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
+
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+      throw new Error("useContext(UserContext) is null, did you forget a UserProvider?");
+  }
+  const { uploadedFiles, setUploadedFiles } = userContext;
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -20,6 +30,20 @@ function FileUpload() {
   };
 
   const handleUploadClick = (file:File) => {
+  
+
+    const isFileAlreadyUploaded = uploadedFiles.some(
+      (uploadedFile:File) => uploadedFile.name === file.name
+    );
+    if (isFileAlreadyUploaded) {
+      // Display a message that the file is already uploaded
+      console.log('File already uploaded!');
+      return;
+    }
+    setUploadedFiles((prevUploadedFiles: File[]) => [...prevUploadedFiles, file]);
+    navigate('/example');
+    /*
+    //Gestion de l'appel serveur 
     const formData = new FormData(); // Création d'un nouvel objet FormData qui permet de stocker les données du formulaire
 
     formData.append('file', file); // Ajout du fichier dans le dictionnaire formData
@@ -40,7 +64,7 @@ function FileUpload() {
     })
     .catch(error => { // Gestion des erreurs
       console.error('Error uploading file: ', error); // Affiche un message d'erreur dans la console du navigateur avec le message d'erreur spécifique
-    });
+    });*/
   }
    
 

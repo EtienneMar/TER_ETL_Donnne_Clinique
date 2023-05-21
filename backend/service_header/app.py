@@ -7,22 +7,11 @@ from io import BytesIO
 app = Flask(__name__)
 CORS(app)
 
-def convert_date_format(date_string):
-    dt = pd.to_datetime(date_string, errors='coerce')
-    if pd.isnull(dt):
-        return None
-    # Check if the original string contains all date parts
-    elif any(part not in date_string for part in [str(dt.year), str(dt.month), str(dt.day), str(dt.hour), str(dt.minute), str(dt.second)]):
-        return date_string
-    else:
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
 
-@app.route('/', methods=['GET'])
-def home_test():
-    return jsonify("conversion up")
 
-@app.route('/excel-to-json', methods=['POST'])
-def excel_to_json(): 
+
+@app.route('/testing_header', methods=['POST'])
+def testing_header_(): 
     if 'file' not in request.files:
         return jsonify({"error" : "No file part"}), 400
     file = request.files['file']

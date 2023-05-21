@@ -11,4 +11,10 @@ export const MenuData = [
     url: '/about',
     className: 'nav-link',
   },
+  {
+    id: 2,
+    title: 'Example',
+    url: '/example',
+    className: 'nav-link',
+  },
 ];

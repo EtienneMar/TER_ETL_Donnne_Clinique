@@ -65,9 +65,6 @@ class Rules():
         self.__df = self.__df.applymap(treatment_leading_zero)
         
     def date_hijri(self, columns_names_to_test : str, date_format : str, dayfirst : bool, yearfirst : bool=None) :
-        
-        # Use vectorized string methods to parse the 'BIRTHDATE' column into datetime objects
-        #'%Y-%m-%d %H:%M:%S'
         df = self.__df.dropna(subset=columns_names_to_test)
         not_parsed_dates = pd.to_datetime(df[columns_names_to_test], format=date_format, errors='coerce')
 

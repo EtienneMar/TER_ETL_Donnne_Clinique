@@ -1,14 +1,35 @@
-import mysql.connector
+import json
+import datetime;
 
-db = mysql.connector.connect(
-    host='localhost',   # use the correct port here
-    port=3307,
-    user='root',
-    password='root',
-    database='ter'
-)
+# Read the JSON file
+file_path = './t.json'
+with open(file_path) as file:
+    # Load JSON data from the file
+    x = json.load(file)
 
-cursor = db.cursor()
-cursor.execute("SELECT * from users;")
-result = cursor.fetchone()
-print(result)
+filtered_data = []
+new_fichier_patient = []
+current_time = datetime.datetime.now()
+current_year = current_time.year
+
+modified_time = current_time.replace(year=current_year - 125)  # Subtracting 1 from the current year
+
+print(current_time.strftime("%Y-%m-%d %H:%M:%S"))
+print(modified_time.strftime("%Y-%m-%d %H:%M:%S"))
+
+
+"""
+for data in x["FichierPatient"]:
+    if data["DATEOFBIRTH"] is None or data["DATEOFBIRTH"]=="":
+        filtered_data.append({
+            "PATIENTNUMBER": data["PATIENTNUMBER"],
+            "EXTRA_DATEOFDEATH": data["EXTRA_DATEOFDEATH"],
+            "RULES": "NULL",
+            "ACTION": "Avertissement",
+            "MESSAGE": "La date de décès doit être renseignée"
+        })
+    else:
+        new_fichier_patient.remove(data)
+"""
+
+        
