@@ -11,3 +11,15 @@
 .login-page {
   max-width: 400px;
 }
+
+.bg-gradient-success {
+  background: linear-gradient(to right, rgb(0, 242, 96), rgb(5, 117, 230));
+}
+
+.bg-gradient-pink {
+  background: linear-gradient(to right, rgb(236, 0, 140), rgb(252, 103, 103));
+}
+
+.dropdown-menu {
+  --bs-dropdown-min-width: 15rem;
+}

@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { UserContext } from '../components/Global/UserProvider';
 import { Hero } from '../components/Hero';
-import {UploadedFiles,  /*Table,*/ Dropdown} from '../components/Example';
+import {UploadedFiles,  /*Table,*/ Dropdown, FileColumns} from '../components/Example';
 
 function Example() {
   const userContext = useContext(UserContext);
@@ -34,6 +34,9 @@ function Example() {
                   uploadedFileName={lastUploadedFile.name}
                 />
               )}
+              <FileColumns
+                uploadedFileName={lastUploadedFile.name}
+              />
             </div>
             <div className="col-lg-6">
 
