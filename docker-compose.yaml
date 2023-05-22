@@ -32,6 +32,13 @@ services:
       - 5005:5005
     networks:
       - my-network
+  header:
+    build: 
+      context: ./backend/service_header/
+    ports:
+      - 5006:5006
+    networks:
+      - my-network
   frontend:
     build:
       context: ./frontend/
