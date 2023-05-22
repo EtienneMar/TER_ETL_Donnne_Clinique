@@ -1,12 +1,12 @@
 
 import { BsLayoutThreeColumns } from 'react-icons/bs';
 
-
 interface FileColumnsProps {
   uploadedFileName: string | null;
+  unmappedHeaders: string[];  // nouvelle propriété pour les en-têtes non mappés
 }
 
-function FileColumns({ uploadedFileName}: FileColumnsProps) {
+function FileColumns({ uploadedFileName, unmappedHeaders }: FileColumnsProps) {
 
   return (
     <div className="list-group mb-3">
@@ -18,6 +18,10 @@ function FileColumns({ uploadedFileName}: FileColumnsProps) {
             : 'File Columns'}
         </span>
       </li>
+      {/* Affichage des en-têtes non mappés */}
+      {unmappedHeaders.map(header => (
+        <li className="list-group-item" key={header}>{header}</li>
+      ))}
     </div>
   );
 }

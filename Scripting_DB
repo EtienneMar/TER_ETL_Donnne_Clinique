@@ -1,0 +1,24 @@
+import pandas as pd
+
+# Chargement du fichier CSV
+data = pd.read_csv('../../../Documents/test.csv')
+
+# Initialisation de la requête SQL
+query = "INSERT IGNORE INTO FieldMapping (DatabaseField, MappedField) VALUES "
+
+print(data.value_counts())
+
+data = data.drop_duplicates()
+print(data.value_counts())
+
+# Création de la requête
+for index, row in data.iterrows():
+    db_field = row[0]
+    mapped_field = row[1]
+    query += f"('{db_field}', '{mapped_field}'),"
+
+# Suppression de la dernière virgule et ajout du point-virgule de fin de requête
+query = query[:-1] + ';'
+
+# Affichage de la requête
+print(query)

@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm install --silent
 RUN npm install serve
 RUN npm install axios
+RUN npm install react-beautiful-dnd 
 COPY . ./
 RUN npm run build
 EXPOSE 3000

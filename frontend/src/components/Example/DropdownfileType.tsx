@@ -2,54 +2,31 @@ import { useState, useContext } from 'react';
 import { BsFileEarmarkExcel } from 'react-icons/bs';
 import { UserContext } from '../Global/UserProvider';
 
-function DropdownFileType() {
+interface DropdownFileTypeProps {
+  onFileTypeSelect: (fileTypeName: string) => void;
+}
+
+const DropdownFileType: React.FC<DropdownFileTypeProps> = ({ onFileTypeSelect }) => {
   const userContext = useContext(UserContext);
   if (!userContext) {
     throw new Error("useContext(UserContext) is null, did you forget a UserProvider?");
   }
-  const { currentFile } = userContext;
+
   
   const fileType: Record<string, string> = {
-    diagnosis: "Diagnosis",
-    encounter: "Encounter",
-    patient: "Patient",
-    procedure: "Procedure",
-    service: "Service",
+    Diagnosis: "Diagnosis",
+    Encounter: "Encounter",
+    Patient: "Patient",
+    Procedure: "Procedure",
+    Service: "Service",
+    Transfer : "Transfer"
   };
 
   const [selectedFileType, setSelectedFileType] = useState<string>();
 
   const handleFileTypeSelect = (fileTypeName: string) => {
     setSelectedFileType(fileTypeName);
-
-    //Gestion de l'appel serveur 
-    const formData = new FormData(); // Création d'un nouvel objet FormData qui permet de stocker les données du formulaire
-
-    formData.append('type_fichier', fileTypeName); // Ajout du type du fichier dans le dictionnaire formData
-    if (currentFile !== null) {
-      formData.append('file', currentFile);
-    }
-
-    fetch('http://localhost:5006/testing_header', { // Envoi de la requête HTTP POST au serveur Flask situé à l'adresse http://localhost:5000/upload
-      method: 'POST', // Spécification de la méthode HTTP POST
-      body: formData // Ajout du dictionnaire formData comme corps de la requête
-    })
-    .then(response => {
-      if (!response.ok) {
-        console.error('Response status:', response.status, 'Status text:', response.statusText);
-        return response.text().then(text => {
-          throw new Error(text || 'Network response was not ok');
-        });
-      }
-      return response.json();
-    })
-    .then(data => { // Traitement de la réponse JSON
-      console.log('Upload successful', data); // Affiche un message de confirmation dans la console du navigateur
-      
-    })
-    .catch(error => { // Gestion des erreurs
-      console.error('Error uploading file: ', error); // Affiche un message d'erreur dans la console du navigateur avec le message d'erreur spécifique
-    });
+    onFileTypeSelect(fileTypeName);
   };
 
   const filteredFileTypes = Object.keys(fileType).filter(fileType => fileType !== selectedFileType);
