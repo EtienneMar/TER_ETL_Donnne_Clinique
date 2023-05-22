@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, /*useEffect*/ } from 'react';
 import { UserContext } from '../components/Global/UserProvider';
 import { Hero } from '../components/Hero';
 import {UploadedFiles,  /*Table,*/ Dropdown, FileColumns, DropdownFileType} from '../components/Example';
@@ -10,6 +10,7 @@ function Example() {
   }
   const { uploadedFiles, currentFile } = userContext;
   const lastUploadedFile = uploadedFiles[uploadedFiles.length - 1]
+
 
 /*
               <FileColumns
