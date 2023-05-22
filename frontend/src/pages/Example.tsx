@@ -8,7 +8,7 @@ function Example() {
   if (!userContext) {
       throw new Error("useContext(UserContext) is null, did you forget a UserProvider?");
   }
-  const { uploadedFiles } = userContext;
+  const { uploadedFiles, currentFile } = userContext;
   const lastUploadedFile = uploadedFiles[uploadedFiles.length - 1]
 
 /*
@@ -34,9 +34,11 @@ function Example() {
                   uploadedFileName={lastUploadedFile.name}
                 />
               )}
-              <FileColumns
-                uploadedFileName={lastUploadedFile.name}
-              />
+              {currentFile && (
+                <FileColumns
+                  uploadedFileName={currentFile.name}
+                />
+              )}
             </div>
             <div className="col-4">
               <Dropdown />

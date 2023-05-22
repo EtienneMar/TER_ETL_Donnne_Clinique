@@ -4,21 +4,24 @@ import { UserContext } from '../Global/UserProvider';
 
 function Dropdown() {
 
-
   const userContext = useContext(UserContext);
   if (!userContext) {
-      throw new Error("useContext(UserContext) is null, did you forget a UserProvider?");
+    throw new Error("useContext(UserContext) is null, did you forget a UserProvider?");
   }
-  const { uploadedFiles } = userContext;
+  const { uploadedFiles, currentFile, setCurrentFile } = userContext;
 
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [showWarning, setShowWarning] = useState(false); // Variable d'état pour le message d'avertissement
+
+  const handleFileFileSelect = (selectedFile : string) => {
+    const file = uploadedFiles.find(file => file.name === selectedFile);
+    if (file) setCurrentFile(file);
+  };
 
   useEffect(() => {
     if (uploadedFiles.length > 0) {
       const newFileNames = uploadedFiles.map(file => file.name);
       setFileNames(newFileNames);
-      localStorage.setItem('uploadedFileNames', JSON.stringify(newFileNames));
     }
   }, [uploadedFiles]);
 
@@ -33,13 +36,14 @@ function Dropdown() {
 
   return (
     <div className="dropdown">
+      <span className="text-primary fw-bold">Current File : </span>
       <button
         className="btn btn-primary dropdown-toggle"
         type="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        Older Excel Files
+        {currentFile?.name ? currentFile.name : "Excel Files"}
       </button>
       {showWarning ? ( // Affiche le message d'avertissement en fonction de la variable d'état
         <ul className="dropdown-menu py-0">
@@ -54,6 +58,7 @@ function Dropdown() {
               <a
                 href="#"
                 className="dropdown-item d-flex align-items-center gap-2"
+                onClick={() => handleFileFileSelect(fileName)}
               >
                 <BsFileEarmarkExcel size="20" />
                 <span>{fileName}</span>
