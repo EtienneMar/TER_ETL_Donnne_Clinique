@@ -55,46 +55,48 @@ function Example() {
               />
                             <Table />
 */
-  return (
-    <>
-      <Hero title="Example Page 😁"
-        content="  An About page is a special web page on a site where your
-        readers/visitors learn more about you and what you do."
-      ></Hero>
-      <section className="py-5 bg-body-secondary">
-        <div className="container py-5">
-          <div className="row">
-            <div className="col-lg-4">
-              {lastUploadedFile && (
-                <UploadedFiles
-                  uploadedFile={lastUploadedFile}
-                  uploadedFileName={lastUploadedFile.name}
-                />
-              )}
-              {currentFile && (
-                <FileColumns
-                  uploadedFileName={currentFile.name}
-                  unmappedHeaders={unmappedHeaders}
-                />
-              )}
-            </div>
-            <div className="col-4">
-              <Dropdown />
-            </div>
-            <div className="col-4">
-              <DropdownFileType onFileTypeSelect={handleFileTypeSelect}/>
-            </div>
-            {/* Vérikfier si l'objet est vide */}
+return (
+  <>
+    <Hero title="Example Page 😁"
+      content="An About page is a special web page on a site where your readers/visitors learn more about you and what you do."
+    ></Hero>
+    <section className="py-5 bg-body-secondary">
+      <div className="container py-5">
+        <div className="row p-0">
+          <div className="col-lg-4">
+            {lastUploadedFile && (
+              <UploadedFiles
+                uploadedFile={lastUploadedFile}
+                uploadedFileName={lastUploadedFile.name}
+              />
+            )}
+          </div>
+          <div className="col-4">
+            <Dropdown />
+          </div>
+          <div className="col-4">
+            <DropdownFileType onFileTypeSelect={handleFileTypeSelect} />
+          </div>
+        </div>
+        <div className="row"> {/* Création d'une nouvelle ligne */}
+          <div className="col-lg-4 mt-3 pt-3"> {/* Ici, nous utilisons une classe col-lg-4 */}
+            {currentFile && (
+              <FileColumns
+                uploadedFileName={currentFile.name}
+                unmappedHeaders={unmappedHeaders}
+              />
+            )}
+          </div>
+          <div className="col-lg-8"> {/* Ici, nous utilisons une classe col-lg-8 */}
             {Object.keys(mapped_table_remaining_possibility).length > 0 && (
-              <div className="col-12">
-                <Table data={Object.values(mapped_table_remaining_possibility)} />
-              </div>
+              <Table data={Object.values(mapped_table_remaining_possibility)} />
             )}
           </div>
         </div>
-      </section>
-    </>
-  );
+      </div>
+    </section>
+  </>
+);
 }
 
 export default Example;
