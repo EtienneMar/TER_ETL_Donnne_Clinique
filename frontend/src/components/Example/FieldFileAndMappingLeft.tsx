@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BsLayoutThreeColumns } from 'react-icons/bs';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Dispatch, SetStateAction } from 'react';
 
 
 
@@ -33,22 +34,27 @@ const DraggableHeader: React.FC<{ header: string | null, setHeader?: (header: st
 };
 
 interface DroppableFieldProps {
-  onDrop: (header: string) => void;
+  index: number; // Ajouter une props d'index
+  onDrop: (index: number, header: string) => void;
 }
 
-const DroppableField: React.FC<DroppableFieldProps>  = ({ onDrop  }) => {
+
+const DroppableField: React.FC<DroppableFieldProps>  = ({ index, onDrop }) => {
   const [droppedItem, setDroppedItem] = useState<string | null>("Faite Glisser le Champ correspondant");
+
+  interface Item {header: string;}
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'header',
-    drop: (item) => {
-      onDrop(item.header);
+    drop: (item : Item) => {
+      onDrop(index, item.header); // Passe l'index à la fonction onDrop
       setDroppedItem(item.header);
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }));
+
   return (
     <td
       ref={drop}
@@ -57,7 +63,7 @@ const DroppableField: React.FC<DroppableFieldProps>  = ({ onDrop  }) => {
       }}
     >
       {droppedItem && (
-          <DraggableHeader header={droppedItem} setHeader={setDroppedItem} key={droppedItem} />
+          <DraggableHeader header={droppedItem} setHeader={setDroppedItem} key={droppedItem}  />
       )}
     </td>
   );
@@ -67,27 +73,41 @@ interface FieldFileAndMappingLeftProps {
   uploadedFileName: string | null;
   unmappedHeaders: string[];
   FieldMappingLeft: string[];
-
+  setunmappedHeader: Dispatch<SetStateAction<string[]>>;
 }
 
 const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
   uploadedFileName,
   unmappedHeaders,
   FieldMappingLeft,
-
+  setunmappedHeader, 
 }) => {
 
-  const [droppedHeaders, setDroppedHeaders] = useState<string[]>([]);
+  const [, setDroppedHeaders] = useState<(string)[]>([]); // Ajouter un état pour les headers déposés
 
-  const handleDrop = (header: string) => {
-    console.log('Handle Drop:', header);
-    setDroppedHeaders([...droppedHeaders, header]);
-  };
-
+  const handleDrop = (index: number, header: string) => {
+    setunmappedHeader(prevHeaders => prevHeaders.filter(h => h !== header));
+    setDroppedHeaders(prev => {
+        const newDropped = [...prev];
+        if (unmappedHeaders.filter(h => h !==prev[index]) && prev[index] !== undefined){
+            setunmappedHeader(prevUnmapped => [...prevUnmapped, prev[index]]);
+        }
+        newDropped[index] = header; // Mettre à jour le header à l'index spécifié
+        return newDropped;
+    });
+};
+  
+  
   const handleReset = () => {
-    setDroppedHeaders([]);
+    //setunmappedHeader([]);
   };
 
+  useEffect(() => {
+    console.log("unmappedHeaders changed:", unmappedHeaders);
+  }, [unmappedHeaders]);
+  useEffect(() => {
+    console.log("droppedHeaders:", setunmappedHeader);
+  }, [setunmappedHeader]);
 
     return (
       <DndProvider backend={HTML5Backend}>
@@ -103,9 +123,8 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
                 </span>
               </li>
             {unmappedHeaders
-              .filter(header => !droppedHeaders.includes(header))
-              .map((header, index) => (
-                <DraggableHeader header={header} key={index} />
+              .map((header) => (
+                <DraggableHeader header={header} key={header} />
             ))}
       </div>
             <button className="btn btn-danger" onClick={handleReset}>
@@ -124,9 +143,9 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
                     </tr>
                   </thead>
                   <tbody id="tableau-element-input">
-                    {FieldMappingLeft.map((index) => (
-                      <tr key={index} className="border border-secondary">
-                        <DroppableField onDrop={handleDrop}  />
+                    {FieldMappingLeft.map((_,index) => (
+                      <tr className="border border-secondary">
+                        <DroppableField index={index} onDrop={handleDrop}  />
                       </tr>
                     ))}
                   </tbody>

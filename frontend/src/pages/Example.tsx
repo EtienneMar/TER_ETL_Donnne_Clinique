@@ -48,13 +48,7 @@ function Example() {
       console.error('Error uploading file: ', error); // Affiche un message d'erreur dans la console du navigateur avec le message d'erreur spécifique
     });
   };
-/*
-              <FileColumns
-                uploadedFileName={uploadedFileName}
-                uploadedFile={uploadedFile}
-              />
-                            <Table />
-*/
+
 return (
   <>
     <Hero title="Example Page 😁"
@@ -82,6 +76,7 @@ return (
               <FieldFileAndMappingLeft
                 uploadedFileName={currentFile.name}
                 unmappedHeaders={unmappedHeaders}
+                setunmappedHeader={setUnmappedHeaders}
                 FieldMappingLeft={Object.values(mapped_table_remaining_possibility)}
               />
             )}
