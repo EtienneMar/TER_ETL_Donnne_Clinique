@@ -3,30 +3,32 @@ import { BsLayoutThreeColumns } from 'react-icons/bs';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-interface DraggableHeaderProps {
-  header: string;
-}
 
-const DraggableHeader: React.FC<DraggableHeaderProps> = ({ header }) => {
+
+const DraggableHeader: React.FC<{ header: string | null, setHeader?: (header: string | null) => void }> = ({ header, setHeader }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'header',
     item: { header },
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult();
+      console.log("dropResult : ", dropResult)
+      console.log("Item : ", item)
+      if (item && dropResult && setHeader) {
+        setHeader("Faite Glisser le Champ correspondant"); // Reset the header value once it is dropped.
+      }
+    },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
     canDrag: () => header !== "Faite Glisser le Champ correspondant"
   }));
-  //console.log('isDragging:', isDragging); 
+
+  
 
   return (
-    <li
-      className="list-group-item"
-      id={header}
-      ref={drag}
-      style={{ opacity: isDragging ? 0.5 : 1 }}
-    >
+    <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
       {header}
-    </li>
+    </div>
   );
 };
 
@@ -34,13 +36,12 @@ interface DroppableFieldProps {
   onDrop: (header: string) => void;
 }
 
-const DroppableField: React.FC<DroppableFieldProps> = ({ onDrop,   }) => {
+const DroppableField: React.FC<DroppableFieldProps>  = ({ onDrop  }) => {
   const [droppedItem, setDroppedItem] = useState<string | null>("Faite Glisser le Champ correspondant");
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'header',
     drop: (item) => {
-      console.log('Dropped Item:', item.header);
       onDrop(item.header);
       setDroppedItem(item.header);
     },
@@ -48,25 +49,15 @@ const DroppableField: React.FC<DroppableFieldProps> = ({ onDrop,   }) => {
       isOver: !!monitor.isOver(),
     }),
   }));
-
-  const [{ isDragging }] = useDrag(() => ({
-    type: 'header',
-    item: { header: droppedItem },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
   return (
     <td
       ref={drop}
       style={{
         backgroundColor: isOver ? 'lightgreen' : 'white',
-        opacity: isDragging ? 0.5 : 1,
       }}
     >
       {droppedItem && (
-          <DraggableHeader header={droppedItem} key={droppedItem} />
+          <DraggableHeader header={droppedItem} setHeader={setDroppedItem} key={droppedItem} />
       )}
     </td>
   );
@@ -85,9 +76,10 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
   FieldMappingLeft,
 
 }) => {
-  const handleDrop = (header: string) => {
-    //console.log('Handle Drop:', header);
 
+  const handleDrop = (header: string) => {
+    console.log('Handle Drop:', header);
+    
     const fileColumn = document.getElementById('file-column');
     const elements = fileColumn?.getElementsByTagName('li');
     if (elements) {
@@ -98,7 +90,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
         }
       }
     }
-    const champFichierExcelInput = document.getElementById('tableau-element-input');
+/*    const champFichierExcelInput = document.getElementById('tableau-element-input');
     const liElements = champFichierExcelInput?.getElementsByTagName('li');
     if (liElements) {
       for (let i = 0; i < liElements.length; i++) {
@@ -106,7 +98,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
               liElements[i].textContent = "Faite Glisser le Champ correspondant"
           }
       }
-    }      
+    }    */   
   };
 
   const handleClearElements = () => {
@@ -140,10 +132,10 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
                     : 'File Columns'}
                 </span>
               </li>
-              {unmappedHeaders.map((header) => (
-                <DraggableHeader header={header} key={header} />
-              ))}
-            </div>
+              {unmappedHeaders.map((header, index) => (
+              <DraggableHeader header={header} key={index} />
+            ))}
+      </div>
             <button className="btn btn-danger" onClick={handleClearElements}>
               Clear File Columns
             </button>
