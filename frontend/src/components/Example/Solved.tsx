@@ -198,3 +198,18 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
 };
 
 export default FieldFileAndMappingLeft;
+
+
+const handleDrop = (index: number, header: string) => {
+  setunmappedHeader(prevHeaders => prevHeaders.filter(h => h !== header));
+  setDroppedHeaders(prev => {
+    const newDropped = [...prev];
+    //console.log("New Dropped", newDropped)
+    //console.log("New prev",prev[index])
+    if (unmappedHeaders.filter(h => h !==prev[index])){
+        setunmappedHeader(prevUnmapped => [...prevUnmapped, prev[index]!]);
+    }
+    newDropped[index] = header; // Mettre à jour le header à l'index spécifié
+    return newDropped;
+  });
+};
