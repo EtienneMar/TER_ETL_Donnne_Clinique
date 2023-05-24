@@ -84,6 +84,11 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
 }) => {
 
   const [, setDroppedHeaders] = useState<(string)[]>([]); // Ajouter un état pour les headers déposés
+  const [initialUnmappedHeaders, setInitialUnmappedHeaders] = useState<string[]>([]);
+
+  useEffect(() => {
+    setInitialUnmappedHeaders(unmappedHeaders); // store the initial unmappedHeaders value
+  }, []);
 
   const handleDrop = (index: number, header: string) => {
     setunmappedHeader(prevHeaders => prevHeaders.filter(h => h !== header));
@@ -100,15 +105,9 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
   const [droppedItems, setDroppedItems] = useState<(string | null)[]>(new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant"));
 
   const handleReset = () => {
+    setunmappedHeader(initialUnmappedHeaders); // reset unmappedHeaders to its initial value
     setDroppedItems(new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant"));
   };
-
-  useEffect(() => {
-    console.log("unmappedHeaders changed:", unmappedHeaders);
-  }, [unmappedHeaders]);
-  useEffect(() => {
-    console.log("droppedHeaders:", setunmappedHeader);
-  }, [setunmappedHeader]);
 
     return (
       <DndProvider backend={HTML5Backend}>
