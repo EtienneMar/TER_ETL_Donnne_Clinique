@@ -34,14 +34,14 @@ const DraggableHeader: React.FC<{ header: string | null, setHeader?: (header: st
 };
 
 interface DroppableFieldProps {
-  index: number; // Ajouter une props d'index
+  index: number;
   onDrop: (index: number, header: string) => void;
+  droppedItem: string | null;
+  setDroppedItem: (item: string | null) => void;
 }
 
 
-const DroppableField: React.FC<DroppableFieldProps>  = ({ index, onDrop }) => {
-  const [droppedItem, setDroppedItem] = useState<string | null>("Faite Glisser le Champ correspondant");
-
+const DroppableField: React.FC<DroppableFieldProps>  = ({ index, onDrop, droppedItem, setDroppedItem }) => {
   interface Item {header: string;}
 
   const [{ isOver }, drop] = useDrop(() => ({
@@ -97,9 +97,10 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
     });
 };
   
-  
+  const [droppedItems, setDroppedItems] = useState<(string | null)[]>(new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant"));
+
   const handleReset = () => {
-    //setunmappedHeader([]);
+    setDroppedItems(new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant"));
   };
 
   useEffect(() => {
@@ -144,9 +145,20 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
                   </thead>
                   <tbody id="tableau-element-input">
                     {FieldMappingLeft.map((_,index) => (
-                      <tr className="border border-secondary">
-                        <DroppableField index={index} onDrop={handleDrop}  />
-                      </tr>
+  <tr className="border border-secondary">
+  <DroppableField 
+    index={index} 
+    onDrop={handleDrop} 
+    droppedItem={droppedItems[index]} 
+    setDroppedItem={(item) => {
+      setDroppedItems(items => {
+        const newItems = [...items];
+        newItems[index] = item;
+        return newItems;
+      });
+    }} 
+  />
+</tr>
                     ))}
                   </tbody>
                 </table>
