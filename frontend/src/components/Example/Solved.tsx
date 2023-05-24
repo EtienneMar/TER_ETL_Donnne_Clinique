@@ -15,6 +15,17 @@ const DraggableHeader: React.FC<{ header: string | null, setHeader?: (header: st
       console.log("Item : ", item)
       if (item && dropResult && setHeader) {
         setHeader("Faite Glisser le Champ correspondant"); // Reset the header value once it is dropped.
+      }else {
+        const fileColumn = document.getElementById('file-column');
+        const elements = fileColumn?.getElementsByTagName('li');
+        if (elements) {
+          for (let i = 0; i < elements.length; i++) {
+            if (elements[i].textContent === header) {
+              elements[i].style.display = 'none';
+              break;
+            }
+            }
+        }
       }
     },
     collect: (monitor) => ({
@@ -23,14 +34,13 @@ const DraggableHeader: React.FC<{ header: string | null, setHeader?: (header: st
     canDrag: () => header !== "Faite Glisser le Champ correspondant"
   }));
 
-  
-
   return (
     <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
       {header}
     </div>
   );
 };
+
 
 interface DroppableFieldProps {
   onDrop: (header: string) => void;
@@ -77,18 +87,48 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
 
 }) => {
 
-  const [droppedHeaders, setDroppedHeaders] = useState<string[]>([]);
-
-  const handleDrop = (header: string) => {
-    console.log('Handle Drop:', header);
-    setDroppedHeaders([...droppedHeaders, header]);
+  const handleDrop = (header: string | null) => {
+    //console.log('Handle Drop:', header);
+    
+    const fileColumn = document.getElementById('file-column');
+    const elements = fileColumn?.getElementsByTagName('li');
+    if (elements) {
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i].textContent === header) {
+          elements[i].style.display = 'none';
+          break;
+        }
+      }
+    }
+/*    const champFichierExcelInput = document.getElementById('tableau-element-input');
+    const liElements = champFichierExcelInput?.getElementsByTagName('li');
+    if (liElements) {
+      for (let i = 0; i < liElements.length; i++) {
+          if(liElements[i].textContent ===header) {
+              liElements[i].textContent = "Faite Glisser le Champ correspondant"
+          }
+      }
+    }    */   
   };
 
-  const handleReset = () => {
-    setDroppedHeaders([]);
+  const handleClearElements = () => {
+    const fileColumn = document.getElementById('file-column');
+    const elements = fileColumn?.getElementsByTagName('li');
+    if (elements) {
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i].style.display == 'none') {
+          elements[i].style.display = 'flex';
+        }
+      }
+    }
   };
-
-
+    /*const fileColumn = document.getElementById('file-column');
+    const elements = fileColumn?.getElementsByTagName('li');
+    if (elements) {
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = 'block';
+      }
+    }*/
     return (
       <DndProvider backend={HTML5Backend}>
         <div className="row">
@@ -102,13 +142,11 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({
                     : 'File Columns'}
                 </span>
               </li>
-            {unmappedHeaders
-              .filter(header => !droppedHeaders.includes(header))
-              .map((header, index) => (
-                <DraggableHeader header={header} key={index} />
+              {unmappedHeaders.map((header, index) => (
+              <DraggableHeader header={header} key={index} />
             ))}
       </div>
-            <button className="btn btn-danger" onClick={handleReset}>
+            <button className="btn btn-danger" onClick={handleClearElements}>
               Clear File Columns
             </button>
           </div>
