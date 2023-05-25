@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { BsLayoutThreeColumns } from 'react-icons/bs';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -96,11 +96,14 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
         setunmappedHeader((prevUnmapped) => [...prevUnmapped, prev[index]]);
       }
       newDropped[index] = header;
+      console.log("New Dropped" , newDropped[index])
       return newDropped;
     });
   };
 
-
+  useEffect(() => {
+    console.log("Dropped Item !:" , droppedItems);
+  }, [droppedItems]);
   
   const handleReset = () => {
     setunmappedHeader(initialUnmappedHeadersRef.current);
