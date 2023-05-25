@@ -1,4 +1,4 @@
-import { useContext, useState, /*useEffect*/ } from 'react';
+import { useContext,  useState } from 'react';
 import { UserContext } from '../components/Global/UserProvider';
 import { Hero } from '../components/Hero';
 import {UploadedFiles, Dropdown, DropdownFileType, FieldFileAndMappingLeft} from '../components/Example';
@@ -12,6 +12,7 @@ function Example() {
   const lastUploadedFile = uploadedFiles[uploadedFiles.length - 1]
   const [unmappedHeaders, setUnmappedHeaders] = useState<string[]>([]);
   const [mapped_table_remaining_possibility, setMappedTableRemainingPossibility] = useState<string[]>([]);
+  
 
   const handleFileTypeSelect = (fileTypeName : string) => {
     //Gestion de l'appel serveur 

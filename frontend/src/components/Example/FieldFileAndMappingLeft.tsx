@@ -19,7 +19,7 @@ const DraggableHeader: React.FC<{ header: string | null, setHeader?: (header: st
     }),
     canDrag: () => header !== "Faite Glisser le Champ correspondant"
   }));
-
+  
   return (
     <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
       {header}
@@ -68,8 +68,22 @@ interface FieldFileAndMappingLeftProps {
 
 const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({uploadedFileName,unmappedHeaders,FieldMappingLeft, setunmappedHeader,}) => {
   
-  const [, setDroppedHeaders] = useState<string[]>([]);
-  const initialUnmappedHeadersRef = useRef(unmappedHeaders);
+  //Déclaration des tableaux modifiant le React Dom
+
+  
+  const [, setDroppedHeaders] = useState<string[]>([]); 
+
+  //Tableau permettant de stocker la 1ere réponse serveur des unmappedsHeaders afin de pouvoir reset les éléments avec le boutton 
+  const initialUnmappedHeadersRef = useRef(unmappedHeaders); 
+
+
+  /*le tableau droppedItems stocke les éléments déposés (chaînes de caractères ou valeurs nulles)
+    La longueur initiale est déterminée par FieldMappingLeft.length pour faire correspondre le nombre de case de 
+    tableau-element-output avec tableau-element-input
+    Chaque élément est initialisé avec la valeur "Faite Glisser le Champ correspondant" */
+  const [droppedItems, setDroppedItems] = useState<(string | null)[]>(
+    new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant")
+  );
   
   const handleDrop = (index: number, header: string) => {
     setunmappedHeader((prevHeaders) => prevHeaders.filter((h) => h !== header));
@@ -86,9 +100,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
     });
   };
 
-  const [droppedItems, setDroppedItems] = useState<(string | null)[]>(
-    new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant")
-  );
+
   
   const handleReset = () => {
     setunmappedHeader(initialUnmappedHeadersRef.current);
