@@ -880,17 +880,20 @@ INSERT INTO FileTypeMapping (FileType, FieldMappingID)
 SELECT 'Service', ID FROM FieldMapping WHERE FileInputField = 'OrderingConsultantSpecialty' AND FieldOutputField = 'EXTRA_ORDERINGCONSULTANTSPECIALTY';
 
 
-CREATE TABLE FieldMapping (
+CREATE TABLE MandatoryFieldFileType (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     TypeFichier VARCHAR(255),
-    MandatoryField JSON
+    MandatoryField SET('PATIENTNUMBER', 'HOSPITAL', 'ENDDATETIME','ENCOUNTERNUMBER', 'WARD', 'STARTDATETIME','DIAGNOSISCODE', 'DIAGNOSISVERSION', 'SEQUENCE', 'PROCEDURECODE', 'PROCEDUREVERSION','QUANTITY', 'SERVICECODE')
 );
 
-INSERT INTO fichierType (TypeFichier)
+
+INSERT INTO MandatoryFieldFileType (TypeFichier, MandatoryField)
 VALUES
-    ('Patient'),
-    ('Diagnosis'),
-    ('Encounter'),
-    ('Procedure'),
-    ('Service'),
-    ('Transfer');
+    ('Patient', 'PATIENTNUMBER'),
+    ('Diagnosis', 'ENCOUNTERNUMBER,DIAGNOSISCODE,DIAGNOSISVERSION,SEQUENCE'),
+    ('Encounter', 'PATIENTNUMBER,HOSPITAL,STARTDATETIME,ENDDATETIME,ENCOUNTERNUMBER'),
+    ('Procedure', 'ENCOUNTERNUMBER,PROCEDURECODE,PROCEDUREVERSION'),
+    ('Service', 'PATIENTNUMBER,STARTDATETIME,QUANTITY,SERVICECODE'),
+    ('Transfer', 'PATIENTNUMBER,ENCOUNTERNUMBER,WARD,STARTDATETIME');
+
+

@@ -43,7 +43,6 @@ def connect_to_database():
 
 @app.route('/mapping_header', methods=['POST'])
 def mapping_header_():
-    print(request.form, request.files)
     type_fichier = request.form.get('type_fichier')
     if type_fichier is None or type_fichier == "":
         return jsonify({"error" : "Missing type_fichier in request body"}), 400
@@ -60,11 +59,11 @@ def mapping_header_():
         #Connection à la base pour tester si le type de fichier existe
         db = connect_to_database()
         cursor = db.cursor()
-        cursor.execute("SELECT typeFichier FROM fichiertype")
+        cursor.execute("SELECT TypeFichier FROM mandatoryfieldfiletype")
         existing_types = [row[0] for row in cursor.fetchall()]
         if type_fichier not in existing_types:
             return jsonify({'error': 'Type de fichier invalide', 'type_possible' : existing_types, "typefichier" : type_fichier}), 400
-        
+
         
         #Si le fichier existe lecture du fichier est récupération des headers
         in_memory_file = BytesIO(file.read())
@@ -94,6 +93,37 @@ def mapping_header_():
         
         return jsonify({'mapped_headers' : mapped_headers, 'unmapped_headers':unmapped_headers, 'mapped_table_remaining_possibility' : mapping_table})
     return jsonify({'error': 'Invalid file format'}), 400
+
+@app.route('/check_header', methods=['POST'])
+def check_header():
+    type_fichier = request.form.get('type_fichier')
+    if type_fichier is None or type_fichier == "":
+        return jsonify({"error" : "Missing type_fichier in request body"}), 400
+    mapping = request.form.get('mapping')
+    if mapping is None or mapping == "": 
+        return jsonify({"error" :  "Missing mapping in request body"}), 400
+    
+    #Connection à la base pour tester les mandatorys fields
+    db = connect_to_database()
+    cursor = db.cursor()
+    cursor.execute("SELECT MandatoryField FROM mandatoryfieldfiletype WHERE TypeFichier=%s",(type_fichier,))
+    results = cursor.fetchall()
+    mandatory_fields = [item for tuple in results for set in tuple for item in set]
+    
+    if len(mandatory_fields)  == 0 : 
+        return jsonify({'error' : 'Le type de Fichier n"existe pas dans la base', 'typefichier' : type_fichier}), 400
+    try:
+        mapping_dict = json.loads(mapping)  # Parse the string into a dictionary
+    except json.JSONDecodeError:
+        return jsonify({"error" :  "Invalid mapping JSON format"}), 400
+    
+    missing_fields = [field for field in mandatory_fields if field not in mapping_dict.values()]
+    
+    if missing_fields:
+        return jsonify({'error': '1 ou plus des MandatoryFields sont manquants', 'mandatory_fields': missing_fields}), 400
+
+
+    return jsonify({'mandatory_fields': True})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5006)

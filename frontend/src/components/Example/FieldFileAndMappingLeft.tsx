@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useRef, useEffect} from 'react';
 import { BsLayoutThreeColumns } from 'react-icons/bs';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -64,46 +64,56 @@ interface FieldFileAndMappingLeftProps {
   unmappedHeaders: string[];
   FieldMappingLeft: string[];
   setunmappedHeader: Dispatch<SetStateAction<string[]>>;
+  droppedItems: string[];
+  setDroppedItems: Dispatch<SetStateAction<string[]>>;
+  
 }
 
-const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({uploadedFileName,unmappedHeaders,FieldMappingLeft, setunmappedHeader,}) => {
+const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({uploadedFileName,unmappedHeaders,FieldMappingLeft, setunmappedHeader,
+                                                                         droppedItems, setDroppedItems}) => {
   
   //Déclaration des tableaux modifiant le React Dom
 
+  useEffect(() => {
+    setDroppedItems(new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // This will run only once
   
-  const [, setDroppedHeaders] = useState<string[]>([]); 
-
   //Tableau permettant de stocker la 1ere réponse serveur des unmappedsHeaders afin de pouvoir reset les éléments avec le boutton 
   const initialUnmappedHeadersRef = useRef(unmappedHeaders); 
-
-
-  /*le tableau droppedItems stocke les éléments déposés (chaînes de caractères ou valeurs nulles)
-    La longueur initiale est déterminée par FieldMappingLeft.length pour faire correspondre le nombre de case de 
-    tableau-element-output avec tableau-element-input
-    Chaque élément est initialisé avec la valeur "Faite Glisser le Champ correspondant" */
-  const [droppedItems, setDroppedItems] = useState<(string | null)[]>(
-    new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant")
-  );
   
   const handleDrop = (index: number, header: string) => {
     setunmappedHeader((prevHeaders) => prevHeaders.filter((h) => h !== header));
-    setDroppedHeaders((prev) => {
+    
+    setDroppedItems((prev) => {
+      console.log("prev", prev)//Renvoie un tableau avec tout les éléments 
       const newDropped = [...prev];
+      console.log("New Dropped Before index", newDropped)//Renvoie un tableau avec tout les éléments plus celui ajoutée ! 
+      //Les deux font la meme chose on garde droppedItems pour mieux comprendre renvoie le dernier indice de dropp mais pas la ou il a été drop j'aimerai récupérer fine  
+      const previousDropped = prev[index];
+      console.log("Previous Dropped GTP", previousDropped, index);
+      
+      //console.log("Previous Dropped",droppedItems[index], index)
+      //newDropped[index] = header;
+      console.log(!unmappedHeaders.includes(prev[index]))
+      if (prev[index] !== "Faite Glisser le Champ correspondant" ) setunmappedHeader((prevUnmapped) => [...prevUnmapped, prev[index]]);
+
+      console.log("New Dropped" , newDropped[index], index)
+      return newDropped;
+      /*
       if (
         unmappedHeaders.filter((h) => h !== prev[index]) &&
         prev[index] !== undefined
       ) {
         setunmappedHeader((prevUnmapped) => [...prevUnmapped, prev[index]]);
-      }
-      newDropped[index] = header;
-      console.log("New Dropped" , newDropped[index])
-      return newDropped;
+      }*/
+
     });
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     console.log("Dropped Item !:" , droppedItems);
-  }, [droppedItems]);
+  }, [droppedItems]);*/
   
   const handleReset = () => {
     setunmappedHeader(initialUnmappedHeadersRef.current);
@@ -112,11 +122,19 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="row">
+      <div>
+                <button className="btn btn-danger" onClick={handleReset}>
+            Clear File Columns
+          </button>
+      </div>
         <div className="col-lg-4 mt-3 pt-3">
+          
           <div className="list-group mb-3" id="file-column">
+            
             <li className="list-group-item d-flex align-items-center justify-content-center gap-2 text-white bg-gradient-pink">
+              
               <BsLayoutThreeColumns size="20" />
+              
               <span className="fw-semibold">
                 {uploadedFileName
                   ? `${uploadedFileName} - File Columns`
@@ -127,9 +145,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
               <DraggableHeader header={header} key={header} />
             ))}
           </div>
-          <button className="btn btn-danger" onClick={handleReset}>
-            Clear File Columns
-          </button>
+
         </div>
         <div className="col-lg-8 d-flex">
           <div className="col-sm-6 mb-3">
@@ -151,8 +167,12 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
                         onDrop={handleDrop}
                         droppedItem={droppedItems[index]}
                         setDroppedItem={(item) => {
+                          if (item === null) {
+                            // Handle null item here, possibly return without setting state
+                            return ;
+                          }
                           setDroppedItems((items) => {
-                            const newItems = [...items];
+                            const newItems: string[] = [...items];
                             newItems[index] = item;
                             return newItems;
                           });
@@ -186,7 +206,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
             </div>
           </div>
         </div>
-      </div>
+
     </DndProvider>
   );
 };
