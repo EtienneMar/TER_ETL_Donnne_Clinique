@@ -1,4 +1,8 @@
-FROM python:3.11.3
+FROM python:3.11.3-alpine
+
+
+# Installer les dépendances de build
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev mariadb-dev
 
 # Créer un répertoire pour le code source de l'application
 WORKDIR /app
@@ -9,11 +13,14 @@ COPY requirements.txt ./
 # Installer les dépendances
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Supprimer les dépendances de build
+RUN apk del .build-deps
+
 # Copier le reste du code de l'application
 COPY . .
 
 # Exposer le port sur lequel le service sera accessible
-EXPOSE 5001
+EXPOSE 5007
 
 # Définir la commande à exécuter lors de l'exécution d'un conteneur basé sur cette image
 ENTRYPOINT ["python", "/app/app.py"]

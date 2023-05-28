@@ -86,19 +86,19 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
     setunmappedHeader((prevHeaders) => prevHeaders.filter((h) => h !== header));
     
     setDroppedItems((prev) => {
-      console.log("prev", prev)//Renvoie un tableau avec tout les éléments 
+      //console.log("prev", prev)//Renvoie un tableau avec tout les éléments 
       const newDropped = [...prev];
-      console.log("New Dropped Before index", newDropped)//Renvoie un tableau avec tout les éléments plus celui ajoutée ! 
+      //console.log("New Dropped Before index", newDropped)//Renvoie un tableau avec tout les éléments plus celui ajoutée ! 
       //Les deux font la meme chose on garde droppedItems pour mieux comprendre renvoie le dernier indice de dropp mais pas la ou il a été drop j'aimerai récupérer fine  
-      const previousDropped = prev[index];
-      console.log("Previous Dropped GTP", previousDropped, index);
+      //const previousDropped = prev[index];
+      //console.log("Previous Dropped GTP", previousDropped, index);
       
       //console.log("Previous Dropped",droppedItems[index], index)
       //newDropped[index] = header;
-      console.log(!unmappedHeaders.includes(prev[index]))
+      //console.log(!unmappedHeaders.includes(prev[index]))
       if (prev[index] !== "Faite Glisser le Champ correspondant" ) setunmappedHeader((prevUnmapped) => [...prevUnmapped, prev[index]]);
 
-      console.log("New Dropped" , newDropped[index], index)
+      //console.log("New Dropped" , newDropped[index], index)
       return newDropped;
       /*
       if (

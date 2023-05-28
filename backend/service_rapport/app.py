@@ -1,60 +1,71 @@
-import pandas as pd
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
-from openpyxl import load_workbook
+from openpyxl import Workbook
+from openpyxl.chart import BarChart, Reference
+
 from io import BytesIO
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 app = Flask(__name__)
 CORS(app)
 
-def convert_date_format(date_string):
-    dt = pd.to_datetime(date_string, errors='coerce')
-    if pd.isnull(dt):
-        return None
-    # Check if the original string contains all date parts
-    elif any(part not in date_string for part in [str(dt.year), str(dt.month), str(dt.day), str(dt.hour), str(dt.minute), str(dt.second)]):
-        return date_string
-    else:
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+@app.route('/rapport_mandatory_fields', methods=['POST'])
+def rapport_mandatory_fields(): 
+    
+    data = request.json
+    logger.debug('Data received: %s', data)
+    
+    if data is None:
+        return jsonify({"error": "No JSON data in the request"}), 400
 
-@app.route('/', methods=['GET'])
-def home_test():
-    return jsonify("conversion up")
+    required_arguments = ['mandatory_fields_missing', 'mandatory_fields', 'file_fields']
+    missing_arguments = [arg for arg in required_arguments if arg not in data]
 
-@app.route('/excel-to-json', methods=['POST'])
-def excel_to_json(): 
-    if 'file' not in request.files:
-        return jsonify({"error" : "No file part"}), 400
-    file = request.files['file']
-    if file.filename == '' : 
-        return jsonify({"error" : "No file part"}), 400
-    if file and file.filename.endswith('.xlsx'): 
-        in_memory_file = BytesIO(file.read())
-        worbook = load_workbook(in_memory_file)
-        json_data = {}
-        for sheet in worbook.worksheets : 
-            sheet_data = []
-            for i in range(1, sheet.max_row):
-                row = {}
-                for j in range(1, sheet.max_column+1):
-                    column_name = sheet.cell(row=1, column=j)
-                    row_data = sheet.cell(row=i+1, column=j)
-                    row.update({column_name.value: row_data.value})
-                sheet_data.append(row)
+    if missing_arguments:
+        return jsonify({"error": f"Missing JSON argument(s): {', '.join(missing_arguments)}"}), 400
+    
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet["A1"] = "MandatoryField_Attendu"
+    sheet["B1"] = "MandatoryField_Manquant"
 
-            json_data[sheet.title] = sheet_data
-        return jsonify(json_data)
-    return jsonify({'error': 'Invalid file format'}), 400
+    # Boucle pour remplir les cellules successives dans la colonne A avec les valeurs de data.mandatory_fields
+    for i, field in enumerate(data['mandatory_fields'], start=2):
+        sheet[f"A{i}"] = field
+        if field in data['file_fields']:
+            logger.debug('Field: %s', field)
+            sheet[f"B{i}"] = field
+        else:
+            logger.debug('Field MANQUANT: %s', field)
+            sheet[f"B{i}"] = "Manquant"
+            
+    last_row = 1 + len(data['mandatory_fields']) 
+    last_row_to_add = 2 + len(data['mandatory_fields']) 
 
-@app.route('/convert_dates', methods=['POST'])
-def convert_dates():
-    data = request.get_json(force=True)
-    for item in data:
-        if item['BIRTHDATE']:
-            item['BIRTHDATE'] = convert_date_format(item['BIRTHDATE'])
-        if item['DATE_REGESITER']:
-            item['DATE_REGESITER'] = convert_date_format(item['DATE_REGESITER'])
-    return jsonify(data)
+    sheet[f"A{last_row_to_add}"] =f'=COUNTA(A2:A{last_row})'
+    sheet[f"B{last_row_to_add}"] =f'=COUNTIF(B2:B{last_row},"Manquant")'
+    
+    chart = BarChart()
+    chart.type = "col"
+    chart.title = "Field Missing vs Field Require"
+    chart.y_axis.title = 'Number Field'
+    y_values = Reference(sheet, min_col=1, min_row=last_row_to_add, max_col=1,max_row=last_row_to_add)
+    x_values = Reference(sheet, min_col=1, min_row=1, max_col=2, max_row=1)
+    chart.add_data(y_values, titles_from_data=True)
+    chart.set_categories(x_values)
+    sheet.add_chart(chart, "E3")
+    
+    # Save workbook to a bytes buffer
+    buffer = BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+
+    # Use Flask's send_file function to send the result
+    return send_file(buffer, download_name='rapport_mandatory_fields.xlsx', as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=5007)

@@ -71,29 +71,48 @@ function Example() {
 
     droppedItems.forEach(element => {//Ajout des mappings Userss
       if (element !== "Faite Glisser le Champ correspondant") {
+        console.log("IndexOf", mapped_table_remaining_possibility)
+        console.log("un" , unmappedHeaders)
         mapping[element] = mapped_table_remaining_possibility[droppedItems.indexOf(element)]
       }
     });
+    console.log("MAPPING",mapping)
     formData.append('mapping', JSON.stringify(mapping))
 
-    fetch('http://localhost:5000/check_header', { // Envoi de la requête HTTP POST au serveur Flask situé à l'adresse http://localhost:5000/upload
+    fetch('http://localhost:5006/check_header', { // Envoi de la requête HTTP POST au serveur Flask situé à l'adresse http://localhost:5000/upload
       method: 'POST', // Spécification de la méthode HTTP POST
       body: formData // Ajout du dictionnaire formData comme corps de la requête
     })
   
-    .then(response => { // Gestion de la réponse du serveur
-      if (!response.ok) { // Si la réponse n'est pas 'ok' (code de statut HTTP 200)
-        throw new Error('Network response was not ok'); // Lance une erreur avec un message d'erreur
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-      return response.json(); // Retourne la réponse sous forme de JSON
+  
+      // Vérifiez si la réponse a le type de contenu application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      if (response.headers.get("content-type") === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+        return response.blob(); // Retournez la réponse comme un blob
+      } else {
+        return response.json(); // Sinon, retournez la réponse comme JSON
+      }
     })
-    .then(data => { // Traitement de la réponse JSON
-      console.log('Upload successful', data); // Affiche un message de confirmation dans la console du navigateur
+    .then(data => {
+      if (data instanceof Blob) {
+        const url = window.URL.createObjectURL(data); // Créez une URL d'objet pour le blob
+        const a = document.createElement('a'); // Créez une nouvelle ancre
+        a.href = url; // Définissez l'URL de l'ancre sur l'URL de l'objet
+        a.download = 'rapport_mandatory_fields.xlsx'; // Définissez le nom du fichier à télécharger
+        document.body.appendChild(a); // Ajoutez l'ancre à l'élément body du document
+        a.click(); // Cliquez sur l'ancre pour déclencher le téléchargement
+        a.remove(); // Retirez l'ancre de l'élément body du document
+      } else {
+        console.log('Upload successful', data); // Sinon, affichez le succès de l'envoi dans la console
+      }
     })
-    .catch(error => { // Gestion des erreurs
-      console.error('Error uploading file: ', error); // Affiche un message d'erreur dans la console du navigateur avec le message d'erreur spécifique
+    .catch(error => {
+      console.error('Error uploading file: ', error);
     });
-  }; 
+  };
 return (
   <>
     <Hero title="Example Page 😁"

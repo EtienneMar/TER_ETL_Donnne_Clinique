@@ -39,6 +39,13 @@ services:
       - 5006:5006
     networks:
       - my-network
+  rapport:
+    build: 
+      context: ./backend/service_rapport/
+    ports:
+      - 5007:5007
+    networks:
+      - my-network
   frontend:
     build:
       context: ./frontend/

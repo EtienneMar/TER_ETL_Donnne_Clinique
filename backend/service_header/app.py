@@ -1,11 +1,15 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from openpyxl import load_workbook
 from io import BytesIO
 import mysql.connector
 import json
+import requests
 from werkzeug.utils import secure_filename
 import re
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
@@ -91,7 +95,7 @@ def mapping_header_():
             else : 
                 unmapped_headers.append(header)
         
-        return jsonify({'mapped_headers' : mapped_headers, 'unmapped_headers':unmapped_headers, 'mapped_table_remaining_possibility' : mapping_table})
+        return jsonify({'mapped_headers' : mapped_headers, 'unmapped_headers':unmapped_headers, 'mapped_table_remaining_possibility' : list(mapping_table.values())})
     return jsonify({'error': 'Invalid file format'}), 400
 
 @app.route('/check_header', methods=['POST'])
@@ -119,11 +123,26 @@ def check_header():
     
     missing_fields = [field for field in mandatory_fields if field not in mapping_dict.values()]
     
+    logger.debug('mapping: %s', mapping)
+    logger.debug('mandatory_fields: %s', mandatory_fields)
+    logger.debug('missing_fields: %s', missing_fields)
+    logger.debug('mapping_fields: %s', list(mapping_dict.values()))
+
+
+        
+    
     if missing_fields:
-        return jsonify({'error': '1 ou plus des MandatoryFields sont manquants', 'mandatory_fields': missing_fields}), 400
+        response = requests.post('http://rapport:5007/rapport_mandatory_fields', json={'mandatory_fields_missing': missing_fields, 'mandatory_fields': mandatory_fields, 'file_fields' : list(mapping_dict.values())}, timeout=10)
+        if response.status_code == 200:
+            buffer = BytesIO()
+            buffer.write(response.content)
+            buffer.seek(0)
+            return send_file(buffer, download_name='rapport_mandatory_fields.xlsx', as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        else:
+            return jsonify({'error': 'Une erreur est survenue lors de la création du rapport.'}), 500
 
+    return jsonify({'message': 'Tous les champs obligatoires sont présents.', 'value' : True})
 
-    return jsonify({'mandatory_fields': True})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5006)
