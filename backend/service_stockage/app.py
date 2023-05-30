@@ -4,6 +4,11 @@ import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+import urllib3
+from http.cookies import SimpleCookie
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
@@ -26,6 +31,7 @@ def home_test():
 
     return jsonify("stockage up"+json_data)
 
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -37,41 +43,124 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+    mapping = request.form.get('mapping')
+    if mapping is None or mapping == "": 
+        return jsonify({"error" :  "Missing mapping in request body"}), 400
+    
+    
+    #APPEL DU JSON POUR MODIFIER LE MAPPING 
+    # Disable the insecure request warning
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        # Call convert excel to json microservice
+    url = 'https://localhost:8443/nifi-api/access/token'
+    username = '6fce31dc-a3ef-4aba-94fc-535d43cca842'
+    password = 'qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM'
+
+    # Construct the request payload as form data
+    data = {
+        'username': username,
+        'password': password
+    }
+
+    # Send the POST request with proper certificate verification and form data
+    response_access_token = requests.post(url, data=data, verify=False, timeout=60)
+
+    # parse the Set-Cookie header into a cookie jar
+    cookie = SimpleCookie()
+    cookie.load(response_access_token.headers['Set-Cookie'])
+    bearer_token = cookie['__Secure-Authorization-Bearer'].value
+
+
+
+    url2 = 'https://localhost:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946'
+    headers2 = {
+        'Authorization': f'Bearer {bearer_token}'
+    }
+
+    #Calling Nifi API for get the process Version
+    response_get_processor = requests.get(url2, headers=headers2, verify=False, timeout=60)
+    json_data = json.loads(response_get_processor.content.decode('utf-8'))
+    version_revision = json_data['revision']['version']
+    
+    #Handling the process Running to permit the overwrite
+    if json_data['component']['state'] == "RUNNING" : 
+        url = 'https://localhost:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946/run-status'  # Replace {id} with actual processor id
+
+        data = {
+            "revision": {
+                "version": version_revision
+            },
+            "state": "STOPPED"  # Update this to the desired state
+        }
+        requests.put(url, headers=headers2, json=data, verify=False, timeout=60)
+        #Changing the value of the version
+        version_revision +=1
+    
+    #Getting the joltspec from the processor
+    jolt_spec = json_data['component']['config']['properties']['jolt-spec']
+    operations = json.loads(jolt_spec)
+
+    #Changing the value of the mappingUser received in by the frontend and reverse the dictionnary 
+    #Reversing is use to be more faster in searching the value in jolt
+    for key, value in mapping.items():
+        mapping[key] = f"FichierPatient[&1].{value.split('.')[-1]}"
+
+    inverted_mapping = {v: k for k, v in mapping.items()}
+
+    #Create the jolt specifiation for mapping
+    for operation in operations:
+        if operation['operation'] == 'shift':
+            shift_spec = operation['spec']['*']
+            for key, value in list(shift_spec.items()):
+                if value in inverted_mapping and key != inverted_mapping[value]:
+                    shift_spec[inverted_mapping[value]] = value
+                    del shift_spec[key]
+    #Sending the change for the processor
+    spec = {
+        "revision": {
+                "version": version_revision
+        },
+        "component": {
+            "id": json_data["component"]["id"],  # The processor ID
+            "config" : {
+                "properties": {
+                    "jolt-spec" : f"{json.dumps(operations)}"
+                }
+            },
+            "state": "RUNNING" 
+        }    
+    }
+
+    response_modify_mapping = requests.put(url2, headers=headers2, verify=False, json=spec, timeout=60)
+
+    if response_modify_mapping.status_code == 200 : 
         with open(file_path, 'rb') as f:
-            response = requests.post('http://conversion:5001/excel-to-json', files={'file': f})
-
-        if response.status_code == 200:
-            json_data = response.json()
-
+            response_conversion_excel_to_json = requests.post('http://conversion:5001/excel-to-json', files={'file': f}, timeout=120)
+        if response_conversion_excel_to_json.status_code == 200:
+            json_data = response_conversion_excel_to_json.json()
             # Save each worksheet as a separate JSON file
             for sheet_name, sheet_data in json_data.items():
                 json_file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{sheet_name}.json")
                 with open(json_file_path, 'w') as json_file:
-                    json.dump(sheet_data, json_file)
+                    json.dump(sheet_data, json_file)   
                     
-             # Send JSON data to NiFi
+                    
+             # Send JSON data to NiFi ENVOIE DANS LE REQUEST LISTENER HANDLE HTTP 
             with open(json_file_path, 'rb') as f:
-                nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f})
-            #A SUPPRIMER
+                nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f},timeout=120)
             if nifi_response.status_code == 200 : 
-                rules_response = requests.post('http://rules:5002/rules', json=nifi_response.json())
-                print(rules_response.json())
+                fichier_traite = nifi_response.json()
+                logger.debug(fichier_traite)
+                return jsonify({"Reponse", "ok"})
               # Check if NiFi request was successful
-            if nifi_response.status_code != 200:
-                return jsonify({"error": "Error sending JSON to NiFi"}), 500
-            #
-
+            else :
+                return jsonify({"error": "Error sending JSON to NiFi", "nifi_response" : nifi_response.text }), nifi_response.status_code
+        else : 
             os.remove(file_path)
+            return jsonify({"error": "Error in converting Excel to JSON","Excel_response" : response_conversion_excel_to_json.text }), response_conversion_excel_to_json.status_code
+    else : 
+        return jsonify({"Erreur" : "impossible de réaliser le mappage Nifi", "response_nifi" : response_modify_mapping.text}), response_modify_mapping.status_code
 
-            return jsonify({"message": "Upload successful and JSON files created"}), 200
-        else:
-            os.remove(file_path)
-            return jsonify({"error": "Error in converting Excel to JSON"}), 500
-
-    else:
-        return jsonify({"error": "File not allowed"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
