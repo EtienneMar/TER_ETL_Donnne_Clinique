@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Header, Footer } from './components';
-import { Home, About, Register, Example, Login, NotFound, } from './pages';
+import { Home, About, Register, Mapping, Login, NotFound, } from './pages';
 import { UserProvider } from './components/Global/UserProvider'
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/example" element={<Example />} />
+          <Route path="/mapping" element={<Mapping />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />

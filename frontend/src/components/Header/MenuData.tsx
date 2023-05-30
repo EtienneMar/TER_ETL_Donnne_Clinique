@@ -13,8 +13,8 @@ export const MenuData = [
   },
   {
     id: 2,
-    title: 'Example',
-    url: '/example',
+    title: 'Mapping',
+    url: '/Mapping',
     className: 'nav-link',
   },
 ];

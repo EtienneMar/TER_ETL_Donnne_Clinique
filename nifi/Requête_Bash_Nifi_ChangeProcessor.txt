@@ -9,7 +9,7 @@ curl 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-a6f2-d7bcf8f
 Command Shell to modify the processor
 
 curl -X PUT 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-ff02-6aeca5eb3d49' \
-  -H 'Authorization: Bearer eyJraWQiOiIxMzEzZmI2OC03OWIzLTRhNGMtOGJhZC1iOGQ2MTBmMmI4NzciLCJhbGciOiJQUzUxMiJ9.eyJzdWIiOiI2ZmNlMzFkYy1hM2VmLTRhYmEtOTRmYy01MzVkNDNjY2E4NDIiLCJhdWQiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwibmJmIjoxNjgzOTIxNjc0LCJpc3MiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNmZjZTMxZGMtYTNlZi00YWJhLTk0ZmMtNTM1ZDQzY2NhODQyIiwiZXhwIjoxNjgzOTUwNDc0LCJpYXQiOjE2ODM5MjE2NzQsImp0aSI6ImI0YmE5ZmUzLTQ0MWUtNGYzYy1iOGUyLTVhMzc0NWM1YzM1NSJ9.JKkCCTvu_oYsmfWsDEw-3Zq_RAqKX9x-Zbof3veV-tI2jFd-zZjlNdiYj_YXUJSsiXoU3wMukJEr_qWSLeQHVKFk0gYQ3QDTg9kyqgs6EHOs3GWTpWKT2K0j08Sc2usoFdpUEKFsEHpWiOs7k8hd-GKmizacrstFWnOTfqi50ZunjzW7tSeQmv8PvOuGXcXzSGs7tTO2ECXAUCcdbtbF_d3sOVWmJ7taKaBInATZqST9eNurTt5N-HS7fLfQBSK_DbQvN_38apHctGDi0s_9CgxV7MMse5Oj9IIzEdUZnayEFG6QEfAR0NrAc-eqNPMhOSCpHetJEbp1o1NeNEkjLfWk3ERtoE5ysyyTzsBA_YsX2ni5BV0pB4teOq_hh0_eNDzFpGR293bhN4VWvYFsKPKPtZ2etk-siHAz6u6JKMbXxuZTxTucNZyLy2liSrDBgRsnf88bRPLn4xSKY1MoyVERXKSjow8WLA7Z072oMUQSCkcoU2oGDsflhdvY2rNFpflfNFLcYruKwsgOLil8jchuWsZue5XL69ZxlIW1uVHBzOKXJeQ2zaL-CB8OelrYeNpCVgH79AjLb4AHnTWK9oiR7VyI-fRh78L17EdqxZ_tmfPCHaXOhTkkxGKBQGFEINoUYePqR2z-QkonYC7wfvIAg0UivU9mdvG5cAhSFfo' \
+  -H 'Authorization: eyJraWQiOiI0NmJkNjgwZS1kZTNhLTQyNDMtOWI1Ny0yODAxZGI1NTIzM2UiLCJhbGciOiJQUzUxMiJ9.eyJzdWIiOiI2ZmNlMzFkYy1hM2VmLTRhYmEtOTRmYy01MzVkNDNjY2E4NDIiLCJhdWQiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwibmJmIjoxNjg1Mjc2NDg5LCJpc3MiOiJTaW5nbGVVc2VyTG9naW5JZGVudGl0eVByb3ZpZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNmZjZTMxZGMtYTNlZi00YWJhLTk0ZmMtNTM1ZDQzY2NhODQyIiwiZXhwIjoxNjg1MzA1Mjg5LCJpYXQiOjE2ODUyNzY0ODksImp0aSI6IjBmYjFhNWRhLTY2ZWItNGYwZS05Yzk2LTY3NjRiZDRlYjBlNCJ9.P_QlH_T9jysHEUnWTzNDPh8iy80npiipHxjH9iYRjpDyQ2bx0hEU5mn5OGLNhPLyR_r-EO1g4ZFqExFL7g7TshYE81OfmCO_N-uzs2RcoZdldKd7tyRh4f2b0MVlZkjj7oq4DnJ_56ftQ8Jy3StBNITAlR4-6ereM0cKkbLAxXY8llh2o6gg_Bd4mmV8PDx4fnOBuBZXNglL8bn6bPeuDWJOKGiYt_wwogf0oJ7UZep0EzwBaGCM4iKemFvxThkCv6Ya2bGCk36OQTKZwDIeGv09R4tiiQTqMWBYTlOp2rTn2usc8d5YQ3_sLBZv4Lxfgueye8RU5yrjKWc4yq3TXeKrMp7qIGhpERWa8eIx2_dxbxfJ5gZsqGOq_nfgMDLSdQSMijxuIjzJrMAshziIiwmY1JGw-lKiwd6HQi1ORqHDYyvLOmTwmOX1_o0ID1tYMnpObz3tvdrVcPjjdNaVyiOLSFj2XX1iYmyAs-9n9y_ujt8o7uiIMPz8ocLWbBMPTnYVc3LDoBqrZBaJQVU4ab2B-yBQtP1rv_ZtnU4btW-wa4rXDxCUsJwG6RCb6CcDYlYHy_D_p7w9mJZ5WuBXpo94RCZjcdd7zxwzec1bGdCNFqjCxWeYI_q7lWA3etWocBw3UORdJy4sIvv1edrUdhnkfteZ25-781TTsciVq-0' \
   -H 'Content-Type: application/json' \
   -d '{
         "component": {
@@ -21,13 +21,75 @@ curl -X PUT 'https://localhost:8443/nifi-api/processors/dbfdf09a-a730-3ac7-ff02-
           }
         },
         "revision": {
-          "version": 0,
-          "clientId": "dbfdf09a-a730-3ac7-ff02-6aeca5eb3d49"
+          "version": 16,
+          "clientId": "623fa623-0188-1000-dd14-cfe5e0634636"
         }
       }' \
   --compressed \
   --insecure
 
+
+{
+  'revision': {
+    'clientId': '623fa623-0188-1000-dd14-cfe5e0634636',
+    'version': 15
+  },
+  'component': {
+    'id': '364f1b18-31d9-1aee-2445-d72a6d0a4946',
+    'config': {
+      'jolt-spec': [
+        {
+          'operation': 'shift',
+          'spec': {
+            '*': {
+              'Hospital': 'FichierPatient[&1].HOSPITAL',
+              'DateOfBirth': 'FichierPatient[&1].DATEOFBIRTH',
+              'Gender': 'FichierPatient[&1].GENDER',
+              'PatientDeceased': 'FichierPatient[&1].EXTRA_PATIENTDECEASED',
+              'DateOfDeath': 'FichierPatient[&1].EXTRA_DATEOFDEATH',
+              'PlaceOfBirth': 'FichierPatient[&1].EXTRA_PLACEOFBIRTH',
+              'EthnicOrigin': 'FichierPatient[&1].ETHNICORIGIN',
+              'Nationality': 'FichierPatient[&1].EXTRA_NATIONALITY',
+              'LastName': 'FichierPatient[&1].LASTNAME',
+              'FirstName': 'FichierPatient[&1].FIRSTNAME',
+              'Title': 'FichierPatient[&1].TITLE',
+              'MothersName': 'FichierPatient[&1].EXTRA_MOTHERSLASTNAME',
+              'MothersPreName': 'FichierPatient[&1].EXTRA_MOTHERSFIRSTNAME',
+              'FathersName': 'FichierPatient[&1].EXTRA_FATHERSLASTNAME',
+              'FathersPreName': 'FichierPatient[&1].EXTRA_FATHERSFIRSTNAME',
+              'FamilyDoctor': 'FichierPatient[&1].EXTRA_FAMILYDOCTOR',
+              'BloodRefusal': 'FichierPatient[&1].EXTRA_BLOODREFUSAL',
+              'OrganDonor': 'FichierPatient[&1].EXTRA_ORGANDONOR',
+              'PrefLanguage': 'FichierPatient[&1].EXTRA_PREFLANGUAGE',
+              'LastUpdateDateTime': 'FichierPatient[&1].EXTRA_LASTUPDATEDATETIME',
+              'NationalID': 'FichierPatient[&1].NATIONALIDENTIFIER',
+              'PATIENTID': 'FichierPatient[&1].PATIENTNUMBER'
+            }
+          }
+        },
+        {
+          'operation': 'modify-overwrite-beta',
+          'spec': {
+            'FichierPatient': {
+              '*': {
+                'PATIENTNUMBER': "=concat(@(1,HOSPITAL),'-',@(1,PATIENTNUMBER))"
+              }
+            }
+          }
+        },
+        {
+          'operation': 'default',
+          'spec': {
+            'RapportConformite': [
+              
+            ]
+          }
+        }
+      ]
+    },
+    'name': 'MAPPING_FIELDS_PATIENT'
+  }
+}
 
 {
 "PatientNumber": "RandomValue1",

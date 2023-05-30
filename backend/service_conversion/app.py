@@ -1,11 +1,31 @@
 import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from openpyxl import load_workbook
 from io import BytesIO
+import numpy as np
+from convertdate import islamic
+from dateutil.parser import parse, ParserError
+from datetime import datetime
+
 
 app = Flask(__name__)
 CORS(app)
+
+
+def convert_date(date_string):
+    hijri_year = islamic.from_gregorian(datetime.now().year, datetime.now().month, datetime.now().day)[0]
+    if len(date_string) >= 10:
+        try:
+            dt = parse(date_string)
+            if dt.year <= hijri_year :
+                date_convertie = islamic.to_gregorian(dt.year, dt.month, dt.day)
+                date_convertie = dt.replace(year=date_convertie[0], month=date_convertie[1], day=date_convertie[2])
+                return date_convertie.strftime("%Y-%m-%d %H:%M:%S")
+            return dt.strftime("%Y-%m-%d %H:%M:%S")
+        except ParserError:
+            pass
+    else : 
+        return date_string
 
 def convert_date_format(date_string):
     dt = pd.to_datetime(date_string, errors='coerce')
@@ -30,31 +50,14 @@ def excel_to_json():
         return jsonify({"error" : "No file part"}), 400
     if file and file.filename.endswith('.xlsx'): 
         in_memory_file = BytesIO(file.read())
-        worbook = load_workbook(in_memory_file)
-        json_data = {}
-        for sheet in worbook.worksheets : 
-            sheet_data = []
-            for i in range(1, sheet.max_row):
-                row = {}
-                for j in range(1, sheet.max_column+1):
-                    column_name = sheet.cell(row=1, column=j)
-                    row_data = sheet.cell(row=i+1, column=j)
-                    row.update({column_name.value: row_data.value})
-                sheet_data.append(row)
-
-            json_data[sheet.title] = sheet_data
+        df = pd.read_excel(in_memory_file)
+        colonne_date = df.select_dtypes(include=[np.datetime64]).columns.tolist()
+        for col in colonne_date:
+            df[col] = df[col].apply(convert_date)
+        json_data = df.to_json() # na="null"
         return jsonify(json_data)
     return jsonify({'error': 'Invalid file format'}), 400
 
-@app.route('/convert_dates', methods=['POST'])
-def convert_dates():
-    data = request.get_json(force=True)
-    for item in data:
-        if item['BIRTHDATE']:
-            item['BIRTHDATE'] = convert_date_format(item['BIRTHDATE'])
-        if item['DATE_REGESITER']:
-            item['DATE_REGESITER'] = convert_date_format(item['DATE_REGESITER'])
-    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)

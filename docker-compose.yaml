@@ -57,6 +57,7 @@ services:
     ports:
       - 8443:8443
       - 5003:5003 
+      - 5011:5011
     environment:
       - SINGLE_USER_CREDENTIALS_USERNAME=6fce31dc-a3ef-4aba-94fc-535d43cca842
       - SINGLE_USER_CREDENTIALS_PASSWORD=qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM

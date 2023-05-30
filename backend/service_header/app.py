@@ -5,7 +5,7 @@ from io import BytesIO
 import mysql.connector
 import json
 import requests
-from werkzeug.utils import secure_filename
+
 import re
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -15,15 +15,16 @@ app = Flask(__name__)
 CORS(app)
 
 def extract_hospital(filename):
-    # This regular expression has a single capture group that gets the words between the first and second underscore
-    match = re.search(r'([^_]+)_([^_]+)', filename)
+    # This regular expression matches anything up to the first underscore, then captures everything up to the second underscore
+    match = re.search(r'^[^_]+_([^_]+)_', filename)
 
     # Check if we found a match
     if match:
-        hospital = match.group(2)  # The second capture group is the hospital
+        hospital = match.group(1)  # The first capture group is the hospital
         return hospital
     else:
         return None
+    
 def extract_operation(filename):
     # This regular expression has a single capture group that gets the string after the second underscore and before the next underscore or dot.
     match = re.search(r'([^_]+)_([^_]+)_([^.]+)', filename)
@@ -114,6 +115,11 @@ def check_header():
     results = cursor.fetchall()
     mandatory_fields = [item for tuple in results for set in tuple for item in set]
     
+    if type_fichier == "Encounter" : 
+        nom_fichier = request.form.get('nom_fichier')
+        if extract_hospital(nom_fichier) is not None or "":
+             mandatory_fields.remove("HOSPITAL")
+    
     if len(mandatory_fields)  == 0 : 
         return jsonify({'error' : 'Le type de Fichier n"existe pas dans la base', 'typefichier' : type_fichier}), 400
     try:
@@ -122,15 +128,7 @@ def check_header():
         return jsonify({"error" :  "Invalid mapping JSON format"}), 400
     
     missing_fields = [field for field in mandatory_fields if field not in mapping_dict.values()]
-    
-    logger.debug('mapping: %s', mapping)
-    logger.debug('mandatory_fields: %s', mandatory_fields)
-    logger.debug('missing_fields: %s', missing_fields)
-    logger.debug('mapping_fields: %s', list(mapping_dict.values()))
-
-
         
-    
     if missing_fields:
         response = requests.post('http://rapport:5007/rapport_mandatory_fields', json={'mandatory_fields_missing': missing_fields, 'mandatory_fields': mandatory_fields, 'file_fields' : list(mapping_dict.values())}, timeout=10)
         if response.status_code == 200:

@@ -1,0 +1,45 @@
+
+
+    """
+        # Call convert excel to json microservice
+        with open(file_path, 'rb') as f:
+            response = requests.post('http://conversion:5001/excel-to-json', files={'file': f})
+
+        if response.status_code == 200:
+            json_data = response.json()
+
+            # Save each worksheet as a separate JSON file
+            for sheet_name, sheet_data in json_data.items():
+                json_file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{sheet_name}.json")
+                with open(json_file_path, 'w') as json_file:
+                    json.dump(sheet_data, json_file)
+                    
+             # Send JSON data to NiFi
+            with open(json_file_path, 'rb') as f:
+                nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f})
+            #A SUPPRIMER
+            if nifi_response.status_code == 200 : 
+                rules_response = requests.post('http://rules:5002/rules', json=nifi_response.json())
+                print(rules_response.json())
+              # Check if NiFi request was successful
+            if nifi_response.status_code != 200:
+                return jsonify({"error": "Error sending JSON to NiFi"}), 500
+            #
+
+            os.remove(file_path)
+
+            return jsonify({"message": "Upload successful and JSON files created"}), 200
+        else:
+            os.remove(file_path)
+            return jsonify({"error": "Error in converting Excel to JSON"}), 500
+
+    else:
+        return jsonify({"error": "File not allowed"}), 400
+    """
+else : 
+            os.remove(file_path)
+            return jsonify({"error": "Error in converting Excel to JSON"}), 500
+
+                else : 
+        return jsonify({"Erreur" : "impossible de réaliser le mappage Nifi", "response_nifi" : response_modify_mapping.text})
+    return jsonify({"oui" : response_modify_mapping})

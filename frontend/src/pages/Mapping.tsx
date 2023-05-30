@@ -1,9 +1,9 @@
 import { useContext,  useState } from 'react';
 import { UserContext } from '../components/Global/UserProvider';
 import { Hero } from '../components/Hero';
-import {UploadedFiles, Dropdown, DropdownFileType, FieldFileAndMappingLeft} from '../components/Example';
+import {UploadedFiles, Dropdown, DropdownFileType, FieldFileAndMappingLeft} from '../components/Mapping';
 
-function Example() {
+function Mapping() {
   const userContext = useContext(UserContext);
   if (!userContext) {
       throw new Error("useContext(UserContext) is null, did you forget a UserProvider?");
@@ -66,7 +66,7 @@ function Example() {
     formData.append('type_fichier', selectedFileType); 
     console.log(file);
     //formData.append('file', file); // Ajout du fichier dans le dictionnaire formData
-    
+    formData.append('nom_fichier', file.name)
     const mapping: { [key: string]: string } = {...mappedHeaders}; //Récupération des mappedsHeaders déjà existants.
 
     droppedItems.forEach(element => {//Ajout des mappings Userss
@@ -106,8 +106,28 @@ function Example() {
         a.click(); // Cliquez sur l'ancre pour déclencher le téléchargement
         a.remove(); // Retirez l'ancre de l'élément body du document
       } else {
-        console.log('Upload successful', data); // Sinon, affichez le succès de l'envoi dans la console
+        
+        if (data.value === true) {
+         formData.append('file', file)
+         fetch('http://localhost:5000/upload', { // Envoi de la requête HTTP POST au serveur Flask situé à l'adresse http://localhost:5000/upload
+         method: 'POST', // Spécification de la méthode HTTP POST
+         body: formData // Ajout du dictionnaire formData comme corps de la requête
+       })
+     
+       .then(response => { // Gestion de la réponse du serveur
+         if (!response.ok) { // Si la réponse n'est pas 'ok' (code de statut HTTP 200)
+           throw new Error('Network response was not ok'); // Lance une erreur avec un message d'erreur
+         }
+         return response.json(); // Retourne la réponse sous forme de JSON
+       })
+       .then(data => { // Traitement de la réponse JSON
+         console.log('Upload successful', data); // Affiche un message de confirmation dans la console du navigateur
+       })
+       .catch(error => { // Gestion des erreurs
+         console.error('Error uploading file: ', error); // Affiche un message d'erreur dans la console du navigateur avec le message d'erreur spécifique
+       });
       }
+    }
     })
     .catch(error => {
       console.error('Error uploading file: ', error);
@@ -171,4 +191,4 @@ return (
 );
 }
 
-export default Example;
+export default Mapping;
