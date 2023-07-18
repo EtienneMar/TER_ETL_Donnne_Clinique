@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, { useEffect} from 'react';
 import { BsLayoutThreeColumns } from 'react-icons/bs';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -66,11 +66,11 @@ interface FieldFileAndMappingLeftProps {
   setunmappedHeader: Dispatch<SetStateAction<string[]>>;
   droppedItems: string[];
   setDroppedItems: Dispatch<SetStateAction<string[]>>;
-  
+  initialUnmappedHeadersRef : string[]
 }
 
 const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({uploadedFileName,unmappedHeaders,FieldMappingLeft, setunmappedHeader,
-                                                                         droppedItems, setDroppedItems}) => {
+                                                                         droppedItems, setDroppedItems, initialUnmappedHeadersRef}) => {
   
   //Déclaration des tableaux modifiant le React Dom
 
@@ -80,8 +80,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
   }, []); // This will run only once
   
   //Tableau permettant de stocker la 1ere réponse serveur des unmappedsHeaders afin de pouvoir reset les éléments avec le boutton 
-  const initialUnmappedHeadersRef = useRef(unmappedHeaders); 
-  
+
   const handleDrop = (index: number, header: string) => {
     setunmappedHeader((prevHeaders) => prevHeaders.filter((h) => h !== header));
     
@@ -94,7 +93,7 @@ const FieldFileAndMappingLeft: React.FC<FieldFileAndMappingLeftProps> = ({upload
   };
 
   const handleReset = () => {
-    setunmappedHeader(initialUnmappedHeadersRef.current);
+    setunmappedHeader(initialUnmappedHeadersRef);
     setDroppedItems(new Array(FieldMappingLeft.length).fill("Faite Glisser le Champ correspondant"));
   };
 

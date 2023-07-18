@@ -12,6 +12,7 @@ function Mapping() {
   const lastUploadedFile = uploadedFiles[uploadedFiles.length - 1]
   const [unmappedHeaders, setUnmappedHeaders] = useState<string[]>([]);
   const [mapped_table_remaining_possibility, setMappedTableRemainingPossibility] = useState<string[]>([]);
+  const [initialUnmappedHeadersRef, setinitialUnmappedHeadersRef] = useState<string[]>([]);
   const [mappedHeaders, setMappedHeader] = useState<Record<string, string>>({});
   const [selectedFileType, setSelectedFileType] = useState<string>()
   
@@ -46,6 +47,7 @@ function Mapping() {
       console.log('Upload successful', data); // Affiche un message de confirmation dans la console du navigateur
       if (data.unmapped_headers) {
         setUnmappedHeaders(data.unmapped_headers);
+        setinitialUnmappedHeadersRef(data.unmapped_headers);
       }
       if (data.mapped_table_remaining_possibility) {
         setMappedTableRemainingPossibility(data.mapped_table_remaining_possibility);
@@ -180,6 +182,7 @@ return (
                 FieldMappingLeft={Object.values(mapped_table_remaining_possibility)}
                 droppedItems={droppedItems}
                 setDroppedItems={setDroppedItems}
+                initialUnmappedHeadersRef={initialUnmappedHeadersRef}
               />
             )}
       </div>

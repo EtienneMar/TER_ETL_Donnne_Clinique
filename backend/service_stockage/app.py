@@ -1,11 +1,12 @@
 import os
 import requests
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import urllib3
 from http.cookies import SimpleCookie
+from io import BytesIO
 import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -43,16 +44,16 @@ def upload_file():
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-    mapping = request.form.get('mapping')
-    if mapping is None or mapping == "": 
+    mapping_str = request.form.get('mapping')
+    if mapping_str is None or mapping_str == "": 
         return jsonify({"error" :  "Missing mapping in request body"}), 400
-    
+    mapping = json.loads(mapping_str)
     
     #APPEL DU JSON POUR MODIFIER LE MAPPING 
     # Disable the insecure request warning
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    url = 'https://localhost:8443/nifi-api/access/token'
+    url = 'https://172.19.0.8:8443/nifi-api/access/token'
     username = '6fce31dc-a3ef-4aba-94fc-535d43cca842'
     password = 'qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM'
 
@@ -64,15 +65,14 @@ def upload_file():
 
     # Send the POST request with proper certificate verification and form data
     response_access_token = requests.post(url, data=data, verify=False, timeout=60)
-
-    # parse the Set-Cookie header into a cookie jar
+    
     cookie = SimpleCookie()
     cookie.load(response_access_token.headers['Set-Cookie'])
     bearer_token = cookie['__Secure-Authorization-Bearer'].value
 
 
 
-    url2 = 'https://localhost:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946'
+    url2 = 'https://172.19.0.8:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946'
     headers2 = {
         'Authorization': f'Bearer {bearer_token}'
     }
@@ -84,7 +84,7 @@ def upload_file():
     
     #Handling the process Running to permit the overwrite
     if json_data['component']['state'] == "RUNNING" : 
-        url = 'https://localhost:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946/run-status'  # Replace {id} with actual processor id
+        url = 'https://172.19.0.8:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946/run-status'  # Replace {id} with actual processor id
 
         data = {
             "revision": {
@@ -147,11 +147,15 @@ def upload_file():
                     
              # Send JSON data to NiFi ENVOIE DANS LE REQUEST LISTENER HANDLE HTTP 
             with open(json_file_path, 'rb') as f:
-                nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f},timeout=120)
+                nifi_response = requests.post('http://nifi:5011/requestListener', files={'file': f},timeout=120)
             if nifi_response.status_code == 200 : 
                 fichier_traite = nifi_response.json()
-                logger.debug(fichier_traite)
-                return jsonify({"Reponse", "ok"})
+                rapport_response = requests.post('http://rapport:5007/rapport', json=fichier_traite, timeout=120)
+                if rapport_response.status_code == 200:
+                    buffer = BytesIO()
+                    buffer.write(rapport_response.content)
+                    buffer.seek(0)
+                    return send_file(buffer, download_name='rapport_mandatory_fields.xlsx', as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
               # Check if NiFi request was successful
             else :
                 return jsonify({"error": "Error sending JSON to NiFi", "nifi_response" : nifi_response.text }), nifi_response.status_code

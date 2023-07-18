@@ -29,6 +29,7 @@ function FileUpload() {
         setSelectedFile(null);
       } else {
         setShowFileTypeAlert(false);
+        setShowFileExistsAlert(false);
         setSelectedFile(file);
       }
     }
