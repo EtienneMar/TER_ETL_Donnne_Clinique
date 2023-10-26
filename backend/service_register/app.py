@@ -6,13 +6,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 CORS(app)
 
-
 @app.route('/register', methods=['POST'])
 def new_account_register() :
     # Create a new connection and cursor
     db = mysql.connector.connect(
         host='host.docker.internal',
-        port=3307,
+        port=3306,
         user='root',
         password='root',
         database='ter'

@@ -201,11 +201,6 @@ VALUES
     ('OrderingConsultant', 'EXTRA_ORDERINGCONSULTANT'),
     ('OrderingConsultantSpecialty', 'EXTRA_ORDERINGCONSULTANTSPECIALTY');
 
-
-
-
-
-
 CREATE TABLE FileTypeMapping (
     FileType VARCHAR(255),
     FieldMappingID INT,

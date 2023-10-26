@@ -39,9 +39,9 @@ def extract_operation(filename):
 def connect_to_database():
     db = mysql.connector.connect(
         host='host.docker.internal',
-        port=3307,
-        user='root',
-        password='root',
+        port=3306,
+        user='etienne',
+        password='password',
         database='ter'
     )
     return db

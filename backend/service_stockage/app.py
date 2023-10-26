@@ -53,7 +53,7 @@ def upload_file():
     # Disable the insecure request warning
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    url = 'https://172.19.0.8:8443/nifi-api/access/token'
+    url = 'https://172.18.0.2:8443/nifi-api/access/token'
     username = '6fce31dc-a3ef-4aba-94fc-535d43cca842'
     password = 'qDNgACY9tCsBUUVkQTGdRUKlSHQZfdcM'
 
@@ -64,15 +64,15 @@ def upload_file():
     }
 
     # Send the POST request with proper certificate verification and form data
-    response_access_token = requests.post(url, data=data, verify=False, timeout=60)
-    
+    response_access_token = requests.post(url, data=data, verify=False, timeout=120)
+
     cookie = SimpleCookie()
     cookie.load(response_access_token.headers['Set-Cookie'])
     bearer_token = cookie['__Secure-Authorization-Bearer'].value
 
 
 
-    url2 = 'https://172.19.0.8:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946'
+    url2 = 'https://172.18.0.2:8443/nifi-api/processors/74646c03-0188-1000-29d9-ee631e7252c8'
     headers2 = {
         'Authorization': f'Bearer {bearer_token}'
     }
@@ -84,7 +84,7 @@ def upload_file():
     
     #Handling the process Running to permit the overwrite
     if json_data['component']['state'] == "RUNNING" : 
-        url = 'https://172.19.0.8:8443/nifi-api/processors/364f1b18-31d9-1aee-2445-d72a6d0a4946/run-status'  # Replace {id} with actual processor id
+        url = 'https://172.18.0.2:8443/nifi-api/processors/74646c03-0188-1000-29d9-ee631e7252c8/run-status'  # Replace {id} with actual processor id
 
         data = {
             "revision": {
@@ -106,7 +106,8 @@ def upload_file():
         mapping[key] = f"FichierPatient[&1].{value.split('.')[-1]}"
 
     inverted_mapping = {v: k for k, v in mapping.items()}
-
+    #logger.debug(inverted_mapping)
+    
     #Create the jolt specifiation for mapping
     for operation in operations:
         if operation['operation'] == 'shift':
@@ -134,20 +135,25 @@ def upload_file():
     response_modify_mapping = requests.put(url2, headers=headers2, verify=False, json=spec, timeout=60)
 
     if response_modify_mapping.status_code == 200 : 
+        #Prepare the mapping to be send in the conversion 
+        data_mapping = {'mapping', json.dumps(inverted_mapping)}
         with open(file_path, 'rb') as f:
-            response_conversion_excel_to_json = requests.post('http://conversion:5001/excel-to-json', files={'file': f}, timeout=120)
+            response_conversion_excel_to_json = requests.post('http://conversion:5001/excel-to-json', files={'file': f},  data={'mapping': data_mapping}, timeout=120)
         if response_conversion_excel_to_json.status_code == 200:
             json_data = response_conversion_excel_to_json.json()
+            
             # Save each worksheet as a separate JSON file
-            for sheet_name, sheet_data in json_data.items():
-                json_file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{sheet_name}.json")
-                with open(json_file_path, 'w') as json_file:
-                    json.dump(sheet_data, json_file)   
-                    
-                    
-             # Send JSON data to NiFi ENVOIE DANS LE REQUEST LISTENER HANDLE HTTP 
-            with open(json_file_path, 'rb') as f:
-                nifi_response = requests.post('http://nifi:5011/requestListener', files={'file': f},timeout=120)
+            logger.debug(json_data)
+            with open('jsonConverted.json', 'w') as file:
+                json.dump(json_data, file, indent=2) 
+                
+            
+
+            #TODO Problème avec la réception de l'envoie du JSON Il me met des \
+            
+            # Send JSON data to NiFi ENVOIE DANS LE REQUEST LISTENER HANDLE HTTP 
+            with open('jsonConverted.json', 'rb') as f:
+                nifi_response = requests.post('http://nifi:5003/requestListener', files={'file': f},timeout=120)
             if nifi_response.status_code == 200 : 
                 fichier_traite = nifi_response.json()
                 rapport_response = requests.post('http://rapport:5007/rapport', json=fichier_traite, timeout=120)
