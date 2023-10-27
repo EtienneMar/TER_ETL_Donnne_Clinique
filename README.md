@@ -27,9 +27,17 @@ Pour développer sur le projet les stack à avoir sur son ordinateur :
 
 Étape  1 : Récupérer le script d'initialisation de la base de donnée {db} dans scripting db.
 Étape 2 : Se placer dans le répertoire du projet où se trouve le docker compose et lancer un build afin de créer les images puis un up pour lancer l'ensemble du projet.
+    
+    Démarrer le daemon docker
+    docker compose create
+
+    Changer les adresse de la base de données
+    Créer votre utilisateur de base de donnée
+    Créer une base TER
 
     docker compose build
-    docker compose up 
+    docker compose up pour lancer tout les conteneurs dans un terminal 
+    docker compose up nifi, conversion etc... pour lancer les services un à un
 
 Étape 3 : A noter pour faire fonctionner uniquement l'IHM notamment le drag and drop il faut avoir la base de donnée et le webservice header à minima d'activée 
 Pour faire fonctionner l'IHM produisant le rapport il faut en plus du processus précédent activée le service de rapport
