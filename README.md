@@ -39,6 +39,9 @@ Pour développer sur le projet les stack à avoir sur son ordinateur :
     docker compose up pour lancer tout les conteneurs dans un terminal 
     docker compose up nifi, conversion etc... pour lancer les services un à un
 
+  Si vous n'arrivez pas à construire les images à cause d'un conflit de network docker utiliser docker network ls et pour
+  voir les différents réseaux docker et supprimer ceux en conflit avec l'adresse : 172.18.0.1
+
 Étape 3 : A noter pour faire fonctionner uniquement l'IHM notamment le drag and drop il faut avoir la base de donnée et le webservice header à minima d'activée 
 Pour faire fonctionner l'IHM produisant le rapport il faut en plus du processus précédent activée le service de rapport
 Pour faire fonctionner l'IHM d'inscription il faut le webService d'inscription et la BD activée

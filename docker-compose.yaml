@@ -1,7 +1,13 @@
 version: "3.9"
 networks:
-  my-network:
+  network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16  # Specify the desired subnet
+          gateway: 172.18.0.1   # Specify the desired gateway IP
+          ip_range: 172.18.0.2/32
 services:
   stockage:
     build:
@@ -9,35 +15,35 @@ services:
     ports:
       - 5000:5000
     networks:
-      - my-network
+      - network
   conversion:
     build: 
       context: ./backend/service_conversion/
     ports:
       - 5001:5001
     networks:
-      - my-network
+      - network
   registry:
     build: 
       context: ./backend/service_register/
     ports:
       - 5005:5005
     networks:
-      - my-network
+      - network
   header:
     build: 
       context: ./backend/service_header/
     ports:
       - 5006:5006
     networks:
-      - my-network
+      - network
   rapport:
     build: 
       context: ./backend/service_rapport/
     ports:
       - 5007:5007
     networks:
-      - my-network
+      - network
   frontend:
     build:
       context: ./frontend/
@@ -56,5 +62,6 @@ services:
     volumes:
       - ./nifi_data:/opt/nifi/nifi-current/data
     networks:
-      - my-network
+      network:
+        ipv4_address: 172.18.0.2  # Specify the desired static IP address
     
